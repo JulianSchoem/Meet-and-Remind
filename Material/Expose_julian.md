@@ -42,30 +42,13 @@ Wiederkehrende Erinnerungen, die aber einen Ort gebunden sind, der nicht immer g
 
 ### Anwendungslogik
 
+#### Clientseitig
 
+- Gibt eine selbstdefinierte Information, wenn man sich einem Ort nähert, zu dem eine Erinnerung angegeben ist.
+- Gibt eine selbstdefinierte Information, wenn man einen Ort verlässt.
+- Gibt eine selbstdefinierte Information, wenn an einem definierten Ort eine situationsabhängige Gegebenheit eintritt. 
 
+#### Serverseitig
 
-
----
-
-
-
-
-
-\1.     Es muss ein Nutzungsproblem identifiziert und lösungsunabhängig beschrieben werden.
-
-\2.     Es muss eine eindeutige, entscheidbare, sowie Technologie- und Lösungsunabhängige Zielsetzung für das Projekt formuliert werden.
-
-\3.     Die Zielsetzung muss Raum für eine Verteiltheit von Anwendungslogik über mehrere Systemkomponenten hinweg bieten.
-
-\4.     Das Projekt muss eine gesellschaftliche und / oder wirtschaftliche Relevanz aufweisen.
-
- <!-- 
-
-#### Szenario 3
-
-Bürokauffrau Silke sitzt an ihrem Arbeitsplatz und legt eine kurze Pause sein. Dabei fällt ihr ein, dass sie zu Hause am morgen vergessen hat die Waschmaschine auszuräumen und auch die Geschirrspülmaschine noch nicht angestellt ist. Sie weiß leider noch nicht, wann sie Feierabend hat, will die beiden Dinge dann aber möglichst direkt zu Hause erledigen.
-
-##### Lösungsansatz zu Szenario 3 
-
---> 
+- Generierung einer Auswertung zu den definierten Orten in Bezug auf die Anzahl an genutzten Erinnerungen.
+- Auswertung in einem Haushalt, welche Person die meisten haushalts-übergreifenden Erinnerungen erledigt hat
