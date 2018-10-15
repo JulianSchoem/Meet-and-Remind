@@ -12,7 +12,7 @@ Die beiden Studenten Robin und Sebastian leben in einer Wohngemeinschaft. Beide 
 
 ##### Lösungsansatz zu Szenario 1
 
-Es muss möglich sein informiert zu werden, wenn man sich in der Nähe eines Geschäftes befindet und eine Person aus dem gleichen Haushalt etwas aus diesem Geschäft benötigt. 
+Es muss möglich sein informiert zu werden, wenn man sich in der Nähe eines Geschäftes befindet und eine Person aus dem gleichen Haushalt (Gruppe oder Firma) etwas aus diesem Geschäft benötigt. 
 
 #### Szenario 2 
 
@@ -67,3 +67,9 @@ Wiederkehrende Erinnerungen, die aber einen Ort gebunden sind, der nicht immer g
 - Durch die Möglichkeit der Erstellung von Gruppen kann Geld gespart werden, da z.B. Autfahrten zu Geschäften verringert werden.
 - Möglichkeit zur Verbindung mit vielen Geräten (Internet of Things)
 - Marktlücke, da bisher nur über Google Home (mit Alexa) abgebildet.
+
+### Erste Zielsetzung
+
+- Die gesellschaftliche Relevanz steht über der wirtschaftlichen.
+- Mit dem System soll Stress verringert und somit die Lebensqualität verbessert werden.
+- Das System soll sowohl als Einzelperson, als auch für Gruppen genutzt werden können.
