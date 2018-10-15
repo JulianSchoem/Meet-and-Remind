@@ -8,15 +8,15 @@
 
 #### Szenario 1
 Die beiden Studenten Robin und Sebastian leben in einer Wohngemeinschaft. Beide unterstützen sich beim Einkaufen von Nahrung oder anderen Produkten. Wenn Robin in der Stadt ist, bringt er des Öfteren Dinge aus dem Supermarkt für Sebastian mit. Leider kommt es auch oft vor, dass einer der beiden am Supermarkt vorbeiläuft, obwohl er Zeit hätte etwas mitzubringen, oder nur für sich selbst einkauft, da vergessen worden ist nachzufragen, was der andere haben wollen würde.
-#### Lösungsansatz zu Szenario 1
+##### Lösungsansatz zu Szenario 1
 Es muss möglich sein informiert zu werden, wenn man sich in der Nähe eines Geschäftes befindet und eine Person aus dem gleichen Haushalt (Gruppe oder Firma) etwas aus diesem Geschäft benötigt.
 #### Szenario 2
 Die Hausfrau Silke hat 4 Kinder. Jede Woche fällt dadurch viel Wäsche an. Es ist leider schon ein paar Mal vorgekommen, dass Silke bei Regen vergessen hat die Wäsche rein zu holen oder in allen Kinderzimmern die Fenster zu zu machen.
-#### Lösungsansatz zu Szenario 2
+##### Lösungsansatz zu Szenario 2
 Wenn man sich an einem gewissen Ort befindet, soll man bei bestimmter Wetterlage eine selbstdefinierte Erinnerung erhalten.
 #### Szenario 3
 Hans arbeitet unter der Woche 300 Kilometer entfernt von seiner Familie in Hamburg. Dort hat er eine eigene Wohnung, in der er je nach Arbeitswoche 2,3 oder auch 4 Tage wohnt. Aus diesem Grund lässt Hans seine private Post zur Wohnung senden, damit er sie zeitnah öffnen und lesen kann. Zu Hause übernimmt das seine Frau, sodass Hans bereits einige Male vergessen hat, innerhalb der Tage in Hamburg, seinen Briefkasten zu öffnen.
-#### Lösung zu Szenario 3
+##### Lösung zu Szenario 3
 Wiederkehrende Erinnerungen, die aber einen Ort gebunden sind, der nicht immer gleichermaßen besucht wird, sollten mit einem Intervall angegeben werden können.
 
 
