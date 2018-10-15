@@ -61,7 +61,7 @@ Wiederkehrende Erinnerungen, die aber einen Ort gebunden sind, der nicht immer g
 
 #### Wirtschaftliche Relevanz
 
-- Durch die Möglichkeit der Erstellung von Gruppen kann Geld gespart werden, da z.B. Autfahrten zu Geschäften verringert werden.
+- Durch die Möglichkeit der Erstellung von Gruppen kann Geld gespart werden, da z.B. Autofahrten zu Geschäften verringert werden.
 - Möglichkeit zur Verbindung mit vielen Geräten (Internet of Things)
 - Marktlücke, da bisher nur über Google Home (mit Alexa) abgebildet.
 
