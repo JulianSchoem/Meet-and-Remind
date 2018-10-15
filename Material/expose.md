@@ -52,4 +52,16 @@ Wiederkehrende Erinnerungen, die aber einen Ort gebunden sind, der nicht immer g
 
 - Erstellte Erinnerungen bei mehrfacher Nutzung priorisieren, sodass sie als Vorschläge an den Benutzer geschickt werden.
 - Generierung einer Auswertung zu den definierten Orten in Bezug auf die Anzahl an genutzten Erinnerungen.
-- Auswertung in einem Haushalt, welche Person die meisten haushalts-übergreifenden Erinnerungen erledigt hat
+- Auswertung in einem Haushalt, welche Person die meisten haushalts-übergreifenden Erinnerungen erledigt hat.
+
+#### Gesellschaftliche Relevanz
+
+- Durch die Möglichkeit der Lokalisierung und Benachrichtigung ergibt sich großes Potential bei der Unterstützung im Alltag.
+- Da Stress eine immer größere Rolle spielt, fällt es vielen Menschen schwer an alle Dinge denken zu können, die sie zu erledigen haben (Stresslindernd).
+- Durch die Möglichkeit der Erstellung von Gruppen kann das Klima in einer Wohngemeinschaft verbessert werden.
+
+#### Wirtschaftliche Relevanz
+
+- Durch die Möglichkeit der Erstellung von Gruppen kann Geld gespart werden, da z.B. Autfahrten zu Geschäften verringert werden.
+- Möglichkeit zur Verbindung mit vielen Geräten (Internet of Things)
+- Marktlücke, da bisher nur über Google Home (mit Alexa) abgebildet.
