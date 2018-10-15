@@ -16,11 +16,11 @@ Es muss möglich sein informiert zu werden, wenn man sich in der Nähe eines Ges
 
 #### Szenario 2 
 
-Die 65 jährige alleinlebende Gerlinde ist in letzter Zeit in gewissen Situationen vergesslicher geworden. Sie möchte gerne weiterhin zu Hause wohnen und nicht in eine Pflegeeinrichtung ziehen, da sie körperlich noch sehr fit ist. Es ist leider schon ein paar Mal vor gekommen, dass Gerlinde beim täglichen Spaziergang mit dem Hund vergessen hat den Herd auszumachen oder bei Regen die Fenster zu zu machen.
+Die Hausfrau Silke hat 4 Kinder. Jede Woche fällt dadurch viel Wäsche an. Es ist leider schon ein paar Mal vor gekommen, dass Silke bei Regen vergessen hat die Wäsche rein zu holen oder in allen Kinderzimmern die Fenster zu zu machen.
 
 ##### Lösungsansatz zu Szenario 2
 
-Wenn man einen gewissen Ort verlässt, soll man an Dinge erinnert werden. Zusätzlich soll beim Verlassen des Ortes geprüft werden, ob andere situationsabhängige Erinnerungen zu beachten sind (z.B. Wetter).
+Wenn man sich an einem gewissen Ort befindet, soll man bei bestimmter Wetterlage eine selbstdefinierte Erinnerung erhalten.
 
 #### Szenario 3
 
@@ -34,7 +34,7 @@ Wiederkehrende Erinnerungen, die aber einen Ort gebunden sind, der nicht immer g
 
 ### Domänenmodell
 
- ![domänenmodell_julian](domänenmodell_julian.png)
+ ![domaenenmodell](domaenenmodell.png)
 
 ### Ursache-Wirkungsdiagramm
 
@@ -46,9 +46,10 @@ Wiederkehrende Erinnerungen, die aber einen Ort gebunden sind, der nicht immer g
 
 - Gibt eine selbstdefinierte Information, wenn man sich einem Ort nähert, zu dem eine Erinnerung angegeben ist.
 - Gibt eine selbstdefinierte Information, wenn man einen Ort verlässt.
-- Gibt eine selbstdefinierte Information, wenn an einem definierten Ort eine situationsabhängige Gegebenheit eintritt. 
+- Gibt eine selbstdefinierte Information, wenn sich das Wetter an einem Ort verändert. 
 
 #### Serverseitig
 
+- Erstellte Erinnerungen bei mehrfacher Nutzung priorisieren, sodass sie als Vorschläge an den Benutzer geschickt werden.
 - Generierung einer Auswertung zu den definierten Orten in Bezug auf die Anzahl an genutzten Erinnerungen.
 - Auswertung in einem Haushalt, welche Person die meisten haushalts-übergreifenden Erinnerungen erledigt hat
