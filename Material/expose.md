@@ -33,15 +33,23 @@ Wiederkehrende Erinnerungen, die aber einen Ort gebunden sind, der nicht immer g
 
 #### Clientseitig
 
-- Gibt eine selbstdefinierte Information, wenn man sich einem Ort nähert, zu dem eine Erinnerung angegeben ist.
-- Gibt eine selbstdefinierte Information, wenn man einen Ort verlässt.
-- Gibt eine selbstdefinierte Information, wenn sich das Wetter an einem Ort verändert. 
+* Gibt eine selbstdefinierte Information, wenn man sich einem Ort nähert, zu dem eine Erinnerung angegeben ist.
+  * Nicht interaktionsgetrieben, da Benutzer die Anwendung nicht direkt benutzt.
+  * Datenanreicherung dadurch, dass wir tracken, dass die Person an einem Ort war, die Erinnerung aber nicht abgehakt wurde.
+  * Dadurch wird im Hintergrund die Erinnerung beim nächsten Mal wieder angezeigt.
+* Gibt eine selbstdefinierte Information, wenn sich das Wetter an einem Ort verändert. 
+  * Nicht interaktionsgetrieben, da geprüft wird, wo sich der Benutzer befindet und über eine Wetter API das Wetter hierfür geprüft wird.
+  * Wir reichern Daten an, indem wir die Daten zu Orten mit denen des Wetters zusammenführen.
+  * Vorhersage nutzen, um zu sagen, wann man die Wäsche rein holen muss, da es bald regnen wird oder es so warm ist, dass sie schnell trocken sein wird.
 
 #### Serverseitig
 
-- Erstellte Erinnerungen bei mehrfacher Nutzung priorisieren, sodass sie als Vorschläge an den Benutzer geschickt werden.
-- Generierung einer Auswertung zu den definierten Orten in Bezug auf die Anzahl an genutzten Erinnerungen.
-- Auswertung in einem Haushalt, welche Person die meisten haushalts-übergreifenden Erinnerungen erledigt hat.
+* Erstellte Erinnerungen bei mehrfacher Nutzung priorisieren, sodass sie als Vorschläge an den Benutzer geschickt werden.
+  * Nicht interaktionsgetrieben, da getrackt wird, ob man eine Erinnerung häufig genutzt hat.
+  * Das System kann dann eigenständig daran erinnern
+  * Definierte Parameter aus z.B. Häufigkeit und aktueller Wetterlage
+* Anreicherung von Daten dadurch, dass (für eine Gruppe) getrackt wird wir oft eine Person Erinnerungen (nicht) erledigt hat
+  * Berechnung z.B. von durchschnittlichen Erinnerungen in der Woche und/oder der Relation von erledigten und erstellten Erinnerungen.
 
 ### Relevanz
 
