@@ -54,6 +54,8 @@ Wiederkehrende Erinnerungen, die aber einen Ort gebunden sind, der nicht immer g
 - Generierung einer Auswertung zu den definierten Orten in Bezug auf die Anzahl an genutzten Erinnerungen.
 - Auswertung in einem Haushalt, welche Person die meisten haushalts-übergreifenden Erinnerungen erledigt hat.
 
+### Relevanz
+
 #### Gesellschaftliche Relevanz
 
 - Durch die Möglichkeit der Lokalisierung und Benachrichtigung ergibt sich großes Potential bei der Unterstützung im Alltag.
