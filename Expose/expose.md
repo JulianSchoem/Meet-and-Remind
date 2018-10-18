@@ -7,11 +7,18 @@
 ### Problemszenario
 
 #### Szenario 1
+
 Die beiden Freunde Lea und Robin kommunizieren meist über Whatsapp miteinander. Oft kommt es aber vor, dass sie Dinge lieber unter 4 Augen besprechen wollen. 
 Wenn sie sich dann aber treffen, haben sie meist vergessen über die Themen zu sprechen.
 
+#### Szenario 2
+
+Bei der Firma XL Software kommt es oft vor, dass zwei Mitarbeiter noch offene Punkte in Projekten besprechen müssen. 
+Sie kommen sich jedoch mehrmals am Tag im Flur entgegen oder treffen sich zufällig in der Küche und vergessen dann die Punkte zu klären. 
+So kommt es immer wieder dazu, dass unnötig Wege gemacht werden oder sich Projekte verzögern.
+
 ##### Lösungsansatz
-Es muss eine Möglichkeit geben, dass die beiden an ihr Gesprächsthema erinnert werden, sobald sie sich treffen.
+Es muss eine Möglichkeit geben, dass die beiden an ihr Gesprächsthema erinnert werden, sobald sich treffen/aufeinander treffen.
 
 
 ### Domänenmodell
