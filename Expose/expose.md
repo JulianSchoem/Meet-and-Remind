@@ -1,24 +1,24 @@
 # Exposé EISWS1819MayerSchoemaker
 
- 
 
-## Ortsbezogene Erinnerungen
+
+## Personenbezogene Erinnerungen
 
 ### Problemszenario
 
 #### Szenario 1
 
-Die beiden Freunde Lea und Robin kommunizieren meist über Whatsapp miteinander. Oft kommt es aber vor, dass sie Dinge lieber unter 4 Augen besprechen wollen. 
+Die beiden Freunde Lea und Robin kommunizieren meist über Whatsapp miteinander. Oft kommt es aber vor, dass sie Dinge lieber unter 4 Augen besprechen wollen.
 Wenn sie sich dann aber treffen, haben sie meist vergessen über die Themen zu sprechen.
 
 #### Szenario 2
 
-Bei der Firma XL Software kommt es oft vor, dass zwei Mitarbeiter noch offene Punkte in Projekten besprechen müssen. 
-Sie kommen sich jedoch mehrmals am Tag im Flur entgegen oder treffen sich zufällig in der Küche und vergessen dann die Punkte zu klären. 
+Bei der Firma XL Software kommt es oft vor, dass zwei Mitarbeiter noch offene Punkte in Projekten besprechen müssen.
+Sie kommen sich jedoch mehrmals am Tag im Flur entgegen oder treffen sich zufällig in der Küche und vergessen dann die Punkte zu klären.
 So kommt es immer wieder dazu, dass unnötig Wege gemacht werden oder sich Projekte verzögern.
 
 ##### Lösungsansatz
-Es muss eine Möglichkeit geben, dass die beiden an ihr Gesprächsthema erinnert werden, sobald sich treffen/aufeinander treffen.
+Es muss eine Möglichkeit geben, dass die beiden an ihr Gesprächsthema erinnert werden, sobald sie sich treffen/aufeinander treffen.
 
 
 ### Domänenmodell
@@ -33,17 +33,17 @@ Es muss eine Möglichkeit geben, dass die beiden an ihr Gesprächsthema erinnert
 
 #### Clientseitig
 
-* Gibt eine selbstdefinierte Information, wenn sich zwei Personen an einem Ort befinden
+* Gibt eine selbstdefinierte Information, wenn sich zwei Personen an einem Ort befinden.
   * Nicht interaktionsgetrieben, da Benutzer die Anwendung nicht direkt benutzt.
-  * Datenanreicherung dadurch, dass wir tracken, dass die Person an einem Ort war, die Erinnerung aber nicht abgehakt wurde (werden dann in serverseitiger Anwendungslogik genutzt).
+  * Datenanreicherung dadurch, dass wir tracken, dass die Person sich mit einer Anderen getroffen hat, die Erinnerung aber nicht abgehakt wurde (werden dann in serverseitiger Anwendungslogik genutzt).
   * Dadurch wird im Hintergrund die Erinnerung beim nächsten Mal wieder angezeigt und höher priorisiert.
 
 #### Serverseitig
 
-* Nicht abgehakte Erinnerungen werden durch die getrackten Daten auf der Clientseite priorisiert
-  * Nicht interaktionsgetrieben, da Clientseite Daten an Serverseite übergibt, die wir für die Priorisierung nutzen
-  * Das System stellt die höher priorisierten Erinnerungen dann auffälliger dar.
-  * Erinnerungen werden an den/die anderen Benutzer der jeweiligen Erinnerung geteilt, wenn die Priorisierung einen gewissen Wert überschreitet.
+* Nicht abgehakte Erinnerungen werden durch die getrackten Daten auf der Clientseite priorisiert und an die Serverseite übergeben.
+  * Wenn die Priorisierung einen gewissen Wert überschreitet, wird die Erinnerung an den anderen Benutzer der jeweiligen Erinnerung geteilt.
+  * Nicht interaktionsgetrieben, da automatische Weiterleitung.
+
 
 ### Relevanz
 
@@ -59,4 +59,4 @@ Es muss eine Möglichkeit geben, dass die beiden an ihr Gesprächsthema erinnert
 ### Erste Zielsetzung
 
 - Die gesellschaftliche Relevanz steht über der wirtschaftlichen.
-- Das System soll sowohl als Einzelperson, als auch für Gruppen genutzt werden können.
+- Das System soll für Einzelpersonen genutzt werden können, die sich mit Anderen Personen mittels 1 zu 1 Kommunikation verbinden.
