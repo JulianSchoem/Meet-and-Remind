@@ -1,7 +1,5 @@
 # Exposé EISWS1819MayerSchoemaker
 
-
-
 ## Personenbezogene Erinnerungen
 
 ### Problemszenario
@@ -43,6 +41,11 @@ Es muss eine Möglichkeit geben, dass die beiden an ihr Gesprächsthema erinnert
 * Nicht abgehakte Erinnerungen werden durch die getrackten Daten auf der Clientseite priorisiert und an die Serverseite übergeben.
   * Wenn die Priorisierung einen gewissen Wert überschreitet, wird die Erinnerung an den anderen Benutzer der jeweiligen Erinnerung geteilt.
   * Nicht interaktionsgetrieben, da automatische Weiterleitung.
+
+
+
+
+
 
 
 ### Relevanz
