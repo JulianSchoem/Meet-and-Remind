@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -30,66 +31,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public ArrayList<BluetoothDevice> bluetoothDevicesList = new ArrayList<>();
     public BluetoothDevicesAdapter bluetoothDevicesAdapter;
     ListView listview_newDevices;
-
-    private final BroadcastReceiver broadcastReceiverState = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            try{
-                if(action.equals(bluetoothAdapter.ACTION_STATE_CHANGED) ) {
-                    int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, bluetoothAdapter.ERROR);
-
-                    switch (state) {
-                        case BluetoothAdapter.STATE_OFF:
-                            Log.d(LOGTAG, "State off");
-                            break;
-                        case BluetoothAdapter.STATE_TURNING_OFF:
-                            Log.d(LOGTAG, "State turning off");
-                            break;
-                        case BluetoothAdapter.STATE_ON:
-                            Log.d(LOGTAG, "State on");
-                            break;
-                        case BluetoothAdapter.STATE_TURNING_ON:
-                            Log.d(LOGTAG, "State turning on");
-                            break;
-                    }
-                }
-            } catch(NullPointerException e) {
-                System.out.print("NullPointerException Caught");
-            }
-        }
-    };
-
-    private final BroadcastReceiver broadcastReceiverDiscovery = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            try {
-                if(action.equals(bluetoothAdapter.ACTION_SCAN_MODE_CHANGED) ) {
-                    int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, bluetoothAdapter.ERROR);
-
-                    switch (mode) {
-                        case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                            Log.d(LOGTAG, "Discovery enabled");
-                            break;
-                        case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                            Log.d(LOGTAG, "Discovery disabled: able to receive connections");
-                            break;
-                        case BluetoothAdapter.SCAN_MODE_NONE:
-                            Log.d(LOGTAG, "Discovery disabled: Not able to receive connections");
-                            break;
-                        case BluetoothAdapter.STATE_CONNECTING:
-                            Log.d(LOGTAG, "Connecting");
-                            break;
-                        case BluetoothAdapter.STATE_CONNECTED:
-                            Log.d(LOGTAG, "Connected!");
-                            break;
-
-                    }
-                }
-            } catch(NullPointerException e) {
-                System.out.print("NullPointerException Caught");
-            }
-        }
-    };
+    ListView listview_bondedDevices;
 
     private final BroadcastReceiver broadcastReceiverDevices = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -133,9 +75,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(broadcastReceiverState);
         unregisterReceiver(broadcastReceiverDevices);
-        unregisterReceiver(broadcastReceiverDiscovery);
         unregisterReceiver(broadcastReceiverBond);
     }
 
@@ -148,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btn_bluetoothDiscovery = findViewById(R.id.btn_bluetoothDiscovery);
         btn_findDevices = findViewById(R.id.btn_findDevices);
         listview_newDevices = findViewById(R.id.listview_newDevices);
+        listview_bondedDevices = findViewById(R.id.listview_bondedDevices);
         bluetoothDevicesList = new ArrayList<>();
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
@@ -170,9 +111,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent discoveryIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                 discoveryIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 500);
                 startActivity(discoveryIntent);
-
-                IntentFilter intentFilter = new IntentFilter(bluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-                registerReceiver(broadcastReceiverDiscovery, intentFilter);
             }
         });
 
@@ -203,13 +141,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Intent bluetoothEnableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivity(bluetoothEnableIntent);
 
-            IntentFilter bluetoothIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-            registerReceiver(broadcastReceiverState, bluetoothIntent);
         } else if ( bluetoothAdapter.isEnabled() ) {
             bluetoothAdapter.disable();
-
-            IntentFilter bluetoothIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-            registerReceiver(broadcastReceiverState, bluetoothIntent);
         }
     }
 
