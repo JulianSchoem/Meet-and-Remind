@@ -12,12 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final String LOGTAG = "MainActivity";
     
@@ -33,24 +35,27 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver broadcastReceiverState = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            try{
+                if(action.equals(bluetoothAdapter.ACTION_STATE_CHANGED) ) {
+                    int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, bluetoothAdapter.ERROR);
 
-            if(action.equals(bluetoothAdapter.ACTION_STATE_CHANGED) ) {
-                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, bluetoothAdapter.ERROR);
-
-                switch (state) {
-                    case BluetoothAdapter.STATE_OFF:
-                        Log.d(LOGTAG, "State off");
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_OFF:
-                        Log.d(LOGTAG, "State turning off");
-                        break;
-                    case BluetoothAdapter.STATE_ON:
-                        Log.d(LOGTAG, "State on");
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_ON:
-                        Log.d(LOGTAG, "State turning on");
-                        break;
+                    switch (state) {
+                        case BluetoothAdapter.STATE_OFF:
+                            Log.d(LOGTAG, "State off");
+                            break;
+                        case BluetoothAdapter.STATE_TURNING_OFF:
+                            Log.d(LOGTAG, "State turning off");
+                            break;
+                        case BluetoothAdapter.STATE_ON:
+                            Log.d(LOGTAG, "State on");
+                            break;
+                        case BluetoothAdapter.STATE_TURNING_ON:
+                            Log.d(LOGTAG, "State turning on");
+                            break;
+                    }
                 }
+            } catch(NullPointerException e) {
+                System.out.print("NullPointerException Caught");
             }
         }
     };
@@ -58,28 +63,31 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver broadcastReceiverDiscovery = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            try {
+                if(action.equals(bluetoothAdapter.ACTION_SCAN_MODE_CHANGED) ) {
+                    int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, bluetoothAdapter.ERROR);
 
-            if(action.equals(bluetoothAdapter.ACTION_SCAN_MODE_CHANGED) ) {
-                int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, bluetoothAdapter.ERROR);
+                    switch (mode) {
+                        case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
+                            Log.d(LOGTAG, "Discovery enabled");
+                            break;
+                        case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
+                            Log.d(LOGTAG, "Discovery disabled: able to receive connections");
+                            break;
+                        case BluetoothAdapter.SCAN_MODE_NONE:
+                            Log.d(LOGTAG, "Discovery disabled: Not able to receive connecttions");
+                            break;
+                        case BluetoothAdapter.STATE_CONNECTING:
+                            Log.d(LOGTAG, "Connecting...");
+                            break;
+                        case BluetoothAdapter.STATE_CONNECTED:
+                            Log.d(LOGTAG, "Connected!");
+                            break;
 
-                switch (mode) {
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                        Log.d(LOGTAG, "Discovery enabled");
-                        break;
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                        Log.d(LOGTAG, "Discovery disabled: able to receive connections");
-                        break;
-                    case BluetoothAdapter.SCAN_MODE_NONE:
-                        Log.d(LOGTAG, "Discovery disabled: Not able to receive connecttions");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTING:
-                        Log.d(LOGTAG, "Connecting...");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTED:
-                        Log.d(LOGTAG, "Connected!");
-                        break;
-
+                    }
                 }
+            } catch(NullPointerException e) {
+                System.out.print("NullPointerException Caught");
             }
         }
     };
@@ -87,13 +95,44 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver broadcastReceiverDevices = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
+            try {
+                if(action.equals(BluetoothDevice.ACTION_FOUND)) {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    bluetoothDevicesList.add(device);
 
-            if(action.equals(BluetoothDevice.ACTION_FOUND)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                bluetoothDevicesList.add(device);
+                    bluetoothDevicesAdapter = new BluetoothDevicesAdapter(context, R.layout.adapter_devices_view, bluetoothDevicesList);
+                    listview_newDevices.setAdapter(bluetoothDevicesAdapter);
+                }
+            } catch(NullPointerException e) {
+                System.out.print("NullPointerException Caught");
+            }
+        }
+    };
 
-                bluetoothDevicesAdapter = new BluetoothDevicesAdapter(context, R.layout.adapter_devices_view, bluetoothDevicesList);
-                listview_newDevices.setAdapter(bluetoothDevicesAdapter);
+    private final BroadcastReceiver broadcastReceiverBond = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            try {
+                if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                    if (device.getBondState() == BluetoothDevice.BOND_BONDED){
+                        Log.d(LOGTAG, "BroadcastReceiver: BOND_BONDED.");
+                        Intent activityIntent = new Intent(MainActivity.this, contact.class);
+                        String bluetoothID = device.getAddress();
+                        activityIntent.putExtra("BTID", bluetoothID);
+                        MainActivity.this.startActivity(activityIntent);
+                    }
+                    if (device.getBondState() == BluetoothDevice.BOND_BONDING) {
+                        Log.d(LOGTAG, "BroadcastReceiver: BOND_BONDING.");
+                    }
+                    if (device.getBondState() == BluetoothDevice.BOND_NONE) {
+                        Log.d(LOGTAG, "BroadcastReceiver: BOND_NONE.");
+                    }
+                }
+            } catch(NullPointerException e) {
+                System.out.print("NullPointerException Caught");
             }
         }
     };
@@ -103,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         unregisterReceiver(broadcastReceiverState);
+        unregisterReceiver(broadcastReceiverDevices);
+        unregisterReceiver(broadcastReceiverDiscovery);
+        unregisterReceiver(broadcastReceiverBond);
     }
 
     @Override
@@ -114,8 +156,14 @@ public class MainActivity extends AppCompatActivity {
         btn_bluetoothDiscovery = findViewById(R.id.btn_bluetoothDiscovery);
         btn_findDevices = findViewById(R.id.btn_findDevices);
         listview_newDevices = findViewById(R.id.listview_newDevices);
+        bluetoothDevicesList = new ArrayList<>();
+
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(broadcastReceiverBond, filter);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        listview_newDevices.setOnItemClickListener(MainActivity.this);
 
         btn_bluetoothOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,16 +231,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void permissionCheck() {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-            int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
-            permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
-            if (permissionCheck != 0) {
+        int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+        permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+        if (permissionCheck != 0) {
 
-                this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
-            }
-        }else{
-            Log.d(LOGTAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
         }
+
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        bluetoothAdapter.cancelDiscovery();
+
+        String bluetoothDeviceName = bluetoothDevicesList.get(position).getName();
+        String bluetoothDeviceAddress = bluetoothDevicesList.get(position).getAddress();
+
+        Log.d(LOGTAG, "clicked a device: " + bluetoothDeviceName + " with ID: " + bluetoothDeviceAddress);
+
+        Toast toast = Toast.makeText(getApplicationContext(), "device: " + bluetoothDeviceName + " with ID: " + bluetoothDeviceAddress, Toast.LENGTH_LONG);
+        toast.show();
+
+        bluetoothDevicesList.get(position).createBond();
+
+    }
 }
