@@ -1,12 +1,13 @@
 package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
 public class contact extends AppCompatActivity {
 
-    public static String BTID;
+    public static String BlueID = "BTID";
 
     TextView textview_bluetoothID;
 
@@ -16,7 +17,9 @@ public class contact extends AppCompatActivity {
         setContentView(R.layout.activity_contact);
 
         textview_bluetoothID = findViewById(R.id.textview_bluetoothID);
-        BTID = getIntent().getExtras().getString(BTID);
-        textview_bluetoothID.setText(BTID);
+
+        BlueID = getIntent().getExtras().getString(BlueID);
+
+        textview_bluetoothID.setText(BlueID);
     }
 }

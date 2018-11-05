@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -75,10 +74,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             Log.d(LOGTAG, "Discovery disabled: able to receive connections");
                             break;
                         case BluetoothAdapter.SCAN_MODE_NONE:
-                            Log.d(LOGTAG, "Discovery disabled: Not able to receive connecttions");
+                            Log.d(LOGTAG, "Discovery disabled: Not able to receive connections");
                             break;
                         case BluetoothAdapter.STATE_CONNECTING:
-                            Log.d(LOGTAG, "Connecting...");
+                            Log.d(LOGTAG, "Connecting");
                             break;
                         case BluetoothAdapter.STATE_CONNECTED:
                             Log.d(LOGTAG, "Connected!");
@@ -124,12 +123,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         activityIntent.putExtra("BTID", bluetoothID);
                         MainActivity.this.startActivity(activityIntent);
                     }
-                    if (device.getBondState() == BluetoothDevice.BOND_BONDING) {
-                        Log.d(LOGTAG, "BroadcastReceiver: BOND_BONDING.");
-                    }
-                    if (device.getBondState() == BluetoothDevice.BOND_NONE) {
-                        Log.d(LOGTAG, "BroadcastReceiver: BOND_NONE.");
-                    }
                 }
             } catch(NullPointerException e) {
                 System.out.print("NullPointerException Caught");
@@ -140,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         unregisterReceiver(broadcastReceiverState);
         unregisterReceiver(broadcastReceiverDevices);
         unregisterReceiver(broadcastReceiverDiscovery);
@@ -175,8 +167,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btn_bluetoothDiscovery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(LOGTAG, "Discovery on");
-
                 Intent discoveryIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                 discoveryIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 500);
                 startActivity(discoveryIntent);
@@ -189,22 +179,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btn_findDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(LOGTAG, "Unpaired Devices");
-
                 if(bluetoothAdapter.isDiscovering()) {
                     bluetoothAdapter.cancelDiscovery();
-                    Log.d(LOGTAG, "Cancel discovery");
-
-                    permissionCheck();
-
                     bluetoothAdapter.startDiscovery();
+
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                     registerReceiver(broadcastReceiverDevices, intentFilter);
                 } else if (!bluetoothAdapter.isDiscovering()) {
-
-                    permissionCheck();
-
                     bluetoothAdapter.startDiscovery();
+
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                     registerReceiver(broadcastReceiverDevices, intentFilter);
                 }
@@ -230,16 +213,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    public void permissionCheck() {
-        int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
-        permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
-        if (permissionCheck != 0) {
-
-            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
-        }
-
-    }
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         bluetoothAdapter.cancelDiscovery();
@@ -247,9 +220,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String bluetoothDeviceName = bluetoothDevicesList.get(position).getName();
         String bluetoothDeviceAddress = bluetoothDevicesList.get(position).getAddress();
 
-        Log.d(LOGTAG, "clicked a device: " + bluetoothDeviceName + " with ID: " + bluetoothDeviceAddress);
-
-        Toast toast = Toast.makeText(getApplicationContext(), "device: " + bluetoothDeviceName + " with ID: " + bluetoothDeviceAddress, Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(getApplicationContext(), "Waiting for: " + bluetoothDeviceName + " with ID: " + bluetoothDeviceAddress, Toast.LENGTH_LONG);
         toast.show();
 
         bluetoothDevicesList.get(position).createBond();
