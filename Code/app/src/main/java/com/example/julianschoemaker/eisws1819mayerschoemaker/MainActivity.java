@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -119,11 +120,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
                 if(bluetoothAdapter.isDiscovering()) {
                     bluetoothAdapter.cancelDiscovery();
+
+                    checkBluetoothPermission();
+
                     bluetoothAdapter.startDiscovery();
 
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                     registerReceiver(broadcastReceiverDevices, intentFilter);
                 } else if (!bluetoothAdapter.isDiscovering()) {
+                    checkBluetoothPermission();
+
                     bluetoothAdapter.startDiscovery();
 
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -143,6 +149,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         } else if ( bluetoothAdapter.isEnabled() ) {
             bluetoothAdapter.disable();
+        }
+    }
+
+    private void checkBluetoothPermission() {
+        int checkPermission = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+        checkPermission += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+        if (checkPermission != 0) {
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
         }
     }
 
