@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public ArrayList<BluetoothDevice> bluetoothDevicesList = new ArrayList<>();
     public BluetoothDevicesAdapter bluetoothDevicesAdapter;
+    public BluetoothConnectionService mBluetoothConnection;
     ListView listview_newDevices;
     ListView listview_bondedDevices;
 
@@ -94,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(broadcastReceiverBond, filter);
+
+        mBluetoothConnection = new BluetoothConnectionService(getApplicationContext());
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
