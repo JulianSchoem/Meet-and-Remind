@@ -19,19 +19,28 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final String LOGTAG = "MainActivity";
+
+    BluetoothConnectionService mBluetoothConnection;
+
+    private static final UUID MY_UUID_INSECURE =
+            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
     
     BluetoothAdapter bluetoothAdapter;
     Button btn_bluetoothOnOff;
     Button btn_bluetoothDiscovery;
     Button btn_findDevices;
+    Button btn_connect;
 
     public ArrayList<BluetoothDevice> bluetoothDevicesList = new ArrayList<>();
     public BluetoothDevicesAdapter bluetoothDevicesAdapter;
-    public BluetoothConnectionService mBluetoothConnection;
+
+    BluetoothDevice device;
+
     ListView listview_newDevices;
     ListView listview_bondedDevices;
 
@@ -40,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             final String action = intent.getAction();
             try {
                 if(action.equals(BluetoothDevice.ACTION_FOUND)) {
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    bluetoothDevicesList.add(device);
+                    BluetoothDevice devicelist = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    bluetoothDevicesList.add(devicelist);
 
                     bluetoothDevicesAdapter = new BluetoothDevicesAdapter(context, R.layout.adapter_devices_view, bluetoothDevicesList);
                     listview_newDevices.setAdapter(bluetoothDevicesAdapter);
@@ -58,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             final String action = intent.getAction();
             try {
                 if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
                     if (device.getBondState() == BluetoothDevice.BOND_BONDED){
                         Log.d(LOGTAG, "BroadcastReceiver: BOND_BONDED.");
@@ -89,8 +98,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btn_bluetoothOnOff = findViewById(R.id.btn_bluetoothOnOff);
         btn_bluetoothDiscovery = findViewById(R.id.btn_bluetoothDiscovery);
         btn_findDevices = findViewById(R.id.btn_findDevices);
+        btn_connect = findViewById(R.id.buttonConnect);
+
         listview_newDevices = findViewById(R.id.listview_newDevices);
-        listview_bondedDevices = findViewById(R.id.listview_bondedDevices);
+       // listview_bondedDevices = findViewById(R.id.listview_bondedDevices);
         bluetoothDevicesList = new ArrayList<>();
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
@@ -138,6 +149,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                     registerReceiver(broadcastReceiverDevices, intentFilter);
                 }
+            }
+        });
+
+        btn_connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO Bluetooth Device herausfinden! Toast funktioniert generell, Methode startClient ohne device nicht zu testen...
+                Toast toast = Toast.makeText(getApplicationContext(), "Waiting for: " + device.getName() + " with ID: " + device.getAddress(), Toast.LENGTH_LONG);
+                toast.show();
+
+                mBluetoothConnection.startClient(device, MY_UUID_INSECURE);
             }
         });
     }

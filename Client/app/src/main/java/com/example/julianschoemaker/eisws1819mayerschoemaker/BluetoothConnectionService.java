@@ -153,6 +153,11 @@ public class BluetoothConnectionService {
     public synchronized void start() {
         Log.d(TAG, "start");
 
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+
         if (mInsecureAcceptThread == null) {
             mInsecureAcceptThread = new AcceptThread();
             mInsecureAcceptThread.start();
