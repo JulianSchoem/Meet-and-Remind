@@ -3,11 +3,15 @@ package com.example.julianschoemaker.eisws1819mayerschoemaker;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,8 +20,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -26,11 +33,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private static final String LOGTAG = "MainActivity";
 
-    BluetoothConnectionService mBluetoothConnection;
+
+    private static final String APP_NAME = "Meet And Remind";
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
-    
+
+    static final int STATE_LISTENING = 1;
+    static final int STATE_CONNECTING = 2;
+    static final int STATE_CONNECTED = 3;
+    static final int STATE_CONNECTION_FAILED = 4;
+    static final int STATE_MESSAGE_RECEIVED = 5;
+
+    static final int REQUEST_ENABLE_BLUETOOTH = 1;
+
+
     BluetoothAdapter mybluetoothAdapter;
     Button btn_bluetoothOnOff;
     Button btn_bluetoothDiscovery;
@@ -46,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     ListView listview_newDevices;
     ListView listview_bondedDevices;
+
+    TextView status;
 
     private final BroadcastReceiver broadcastReceiverDevices = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -104,17 +123,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         listview_newDevices = findViewById(R.id.listview_newDevices);
         listview_bondedDevices = findViewById(R.id.listview_bondedDevices);
+        status = findViewById(R.id.status);
 
         bluetoothDevicesList = new ArrayList<>();
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(broadcastReceiverBond, filter);
 
-        mBluetoothConnection = new BluetoothConnectionService(getApplicationContext());
-
         mybluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         listview_newDevices.setOnItemClickListener(MainActivity.this);
+
+
 
         btn_bluetoothOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,6 +188,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                     registerReceiver(broadcastReceiverDevices, intentFilter);
                 }
+
+                ServerClass serverClass = new ServerClass();
+                serverClass.start();
+            }
+        });
+
+        listview_bondedDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BluetoothDevice device = pairedDevicesList.get(position);
+                ClientClass clientClass = new ClientClass(device);
+                clientClass.start();
+
+                status.setText("Connecting");
             }
         });
 
@@ -207,4 +241,118 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         bluetoothDevicesList.get(position).createBond();
 
     }
+
+    Handler handler = new Handler(new Handler.Callback(){
+
+        @Override
+        public boolean handleMessage(Message msg) {
+
+            switch(msg.what){
+                case STATE_LISTENING:
+                    status.setText("Listening");
+                    break;
+                case STATE_CONNECTING:
+                    status.setText("Connecting");
+                    break;
+                case STATE_CONNECTED:
+                    status.setText("Connected");
+                    break;
+                case STATE_CONNECTION_FAILED:
+                    status.setText("Connection Failed");
+                    break;
+                case STATE_MESSAGE_RECEIVED:
+                    status.setText("Received");
+                    break;
+
+            }
+
+            return false;
+        }
+    });
+
+    private class ServerClass extends Thread{
+
+        private BluetoothServerSocket serverSocket;
+
+        public ServerClass() {
+
+            try {
+                serverSocket = mybluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(APP_NAME, MY_UUID_INSECURE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void run(){
+
+            BluetoothSocket socket = null;
+
+            while(socket == null){
+
+                try {
+                    Message message = Message.obtain();
+                    message.what = STATE_CONNECTING;
+                    handler.sendMessage(message);
+
+                    socket = serverSocket.accept();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Message message = Message.obtain();
+                    message.what = STATE_CONNECTION_FAILED;
+                    handler.sendMessage(message);
+                }
+
+                if (socket != null){
+                    Message message = Message.obtain();
+                    message.what = STATE_CONNECTED;
+                    handler.sendMessage(message);
+
+                    //send receive
+
+                    break;
+
+                }
+            }
+
+
+        }
+
+
+    }
+
+    private class ClientClass extends Thread{
+
+        private BluetoothDevice device;
+        private BluetoothSocket socket;
+
+        public ClientClass(BluetoothDevice device) {
+            this.device = device;
+            try {
+                socket = device.createRfcommSocketToServiceRecord(MY_UUID_INSECURE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void run() {
+
+            try {
+                socket.connect();
+
+                Message message = Message.obtain();
+                message.what = STATE_CONNECTED;
+                handler.sendMessage(message);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+
+                Message message = Message.obtain();
+                message.what = STATE_CONNECTION_FAILED;
+                handler.sendMessage(message);
+            }
+
+        }
+
+    }
+
 }
