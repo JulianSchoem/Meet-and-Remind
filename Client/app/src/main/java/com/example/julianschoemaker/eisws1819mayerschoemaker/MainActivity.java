@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -30,14 +31,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
     
-    BluetoothAdapter bluetoothAdapter;
+    BluetoothAdapter mybluetoothAdapter;
     Button btn_bluetoothOnOff;
     Button btn_bluetoothDiscovery;
     Button btn_findDevices;
-    Button btn_connect;
 
     public ArrayList<BluetoothDevice> bluetoothDevicesList = new ArrayList<>();
     public BluetoothDevicesAdapter bluetoothDevicesAdapter;
+
+    public ArrayList<BluetoothDevice> pairedDevicesList = new ArrayList<>();
+    public BluetoothDevicesAdapter pairedDevicesAdapter;
 
     BluetoothDevice device;
 
@@ -98,10 +101,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btn_bluetoothOnOff = findViewById(R.id.btn_bluetoothOnOff);
         btn_bluetoothDiscovery = findViewById(R.id.btn_bluetoothDiscovery);
         btn_findDevices = findViewById(R.id.btn_findDevices);
-        btn_connect = findViewById(R.id.buttonConnect);
 
         listview_newDevices = findViewById(R.id.listview_newDevices);
-       // listview_bondedDevices = findViewById(R.id.listview_bondedDevices);
+        listview_bondedDevices = findViewById(R.id.listview_bondedDevices);
+
         bluetoothDevicesList = new ArrayList<>();
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         mBluetoothConnection = new BluetoothConnectionService(getApplicationContext());
 
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mybluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         listview_newDevices.setOnItemClickListener(MainActivity.this);
 
@@ -132,19 +135,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btn_findDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bluetoothAdapter.isDiscovering()) {
-                    bluetoothAdapter.cancelDiscovery();
+
+                //Get already Paired Devices
+                Set<BluetoothDevice> bt = mybluetoothAdapter.getBondedDevices();
+
+                if (bt.size() > 0){
+
+                    for(BluetoothDevice device: bt){
+                        pairedDevicesList.add(device);
+                    }
+                }
+
+                pairedDevicesAdapter = new BluetoothDevicesAdapter(getApplicationContext(), R.layout.adapter_devices_view, pairedDevicesList);
+                listview_bondedDevices.setAdapter(pairedDevicesAdapter);
+
+
+                // Discover Devices
+                if(mybluetoothAdapter.isDiscovering()) {
+                    mybluetoothAdapter.cancelDiscovery();
 
                     checkBluetoothPermission();
 
-                    bluetoothAdapter.startDiscovery();
+                    mybluetoothAdapter.startDiscovery();
 
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                     registerReceiver(broadcastReceiverDevices, intentFilter);
-                } else if (!bluetoothAdapter.isDiscovering()) {
+                } else if (!mybluetoothAdapter.isDiscovering()) {
                     checkBluetoothPermission();
 
-                    bluetoothAdapter.startDiscovery();
+                    mybluetoothAdapter.startDiscovery();
 
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                     registerReceiver(broadcastReceiverDevices, intentFilter);
@@ -152,28 +171,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-        btn_connect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO Bluetooth Device herausfinden! Toast funktioniert generell, Methode startClient ohne device nicht zu testen...
-                Toast toast = Toast.makeText(getApplicationContext(), "Waiting for: " + device.getName() + " with ID: " + device.getAddress(), Toast.LENGTH_LONG);
-                toast.show();
-
-                mBluetoothConnection.startClient(device, MY_UUID_INSECURE);
-            }
-        });
     }
 
     public void bluetoothEnableDisable() {
-        if(bluetoothAdapter == null) {
+        if(mybluetoothAdapter == null) {
             // Can not use BT
             Log.d(LOGTAG, "Device does not have BT");
-        } else if ( !bluetoothAdapter.isEnabled() ) {
+        } else if ( !mybluetoothAdapter.isEnabled() ) {
             Intent bluetoothEnableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivity(bluetoothEnableIntent);
 
-        } else if ( bluetoothAdapter.isEnabled() ) {
-            bluetoothAdapter.disable();
+        } else if ( mybluetoothAdapter.isEnabled() ) {
+            mybluetoothAdapter.disable();
         }
     }
 
@@ -187,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        bluetoothAdapter.cancelDiscovery();
+        mybluetoothAdapter.cancelDiscovery();
 
         String bluetoothDeviceName = bluetoothDevicesList.get(position).getName();
         String bluetoothDeviceAddress = bluetoothDevicesList.get(position).getAddress();
