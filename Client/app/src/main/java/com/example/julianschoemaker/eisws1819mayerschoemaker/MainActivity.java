@@ -157,40 +157,46 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
 
                 //Get already Paired Devices
-                Set<BluetoothDevice> bt = mybluetoothAdapter.getBondedDevices();
+                if (!mybluetoothAdapter.isEnabled()) {
+                    Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
+                } else {
 
-                if (bt.size() > 0){
+                    Set<BluetoothDevice> bt = mybluetoothAdapter.getBondedDevices();
 
-                    for(BluetoothDevice device: bt){
-                        pairedDevicesList.add(device);
+                    if (bt.size() > 0) {
+
+                        for (BluetoothDevice device : bt) {
+                            pairedDevicesList.add(device);
+                        }
                     }
+
+                    pairedDevicesAdapter = new BluetoothDevicesAdapter(getApplicationContext(), R.layout.adapter_devices_view, pairedDevicesList);
+                    listview_bondedDevices.setAdapter(pairedDevicesAdapter);
+
+
+                    // Discover Devices
+                    if (mybluetoothAdapter.isDiscovering()) {
+                        mybluetoothAdapter.cancelDiscovery();
+
+                        checkBluetoothPermission();
+
+                        mybluetoothAdapter.startDiscovery();
+
+                        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                        registerReceiver(broadcastReceiverDevices, intentFilter);
+                    } else if (!mybluetoothAdapter.isDiscovering()) {
+                        checkBluetoothPermission();
+
+                        mybluetoothAdapter.startDiscovery();
+
+                        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                        registerReceiver(broadcastReceiverDevices, intentFilter);
+                    }
+
+                    ServerClass serverClass = new ServerClass();
+                    serverClass.start();
                 }
-
-                pairedDevicesAdapter = new BluetoothDevicesAdapter(getApplicationContext(), R.layout.adapter_devices_view, pairedDevicesList);
-                listview_bondedDevices.setAdapter(pairedDevicesAdapter);
-
-
-                // Discover Devices
-                if(mybluetoothAdapter.isDiscovering()) {
-                    mybluetoothAdapter.cancelDiscovery();
-
-                    checkBluetoothPermission();
-
-                    mybluetoothAdapter.startDiscovery();
-
-                    IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                    registerReceiver(broadcastReceiverDevices, intentFilter);
-                } else if (!mybluetoothAdapter.isDiscovering()) {
-                    checkBluetoothPermission();
-
-                    mybluetoothAdapter.startDiscovery();
-
-                    IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                    registerReceiver(broadcastReceiverDevices, intentFilter);
-                }
-
-                ServerClass serverClass = new ServerClass();
-                serverClass.start();
             }
         });
 
