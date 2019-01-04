@@ -13,11 +13,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,8 +49,8 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
 
 
     BluetoothAdapter mybluetoothAdapter;
-    Button btn_bluetoothOnOff;
-    Button btn_bluetoothDiscovery;
+    Switch btn_bluetoothOnOff;
+    Switch btn_bluetoothDiscovery;
     Button btn_findDevices;
 
     public ArrayList<BluetoothDevice> bluetoothDevicesList = new ArrayList<>();
@@ -114,6 +117,10 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
 
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("Neuen Kontakt hinzufügen");
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+
         btn_bluetoothOnOff = findViewById(R.id.btn_bluetoothOnOff);
         btn_bluetoothDiscovery = findViewById(R.id.btn_bluetoothDiscovery);
         btn_findDevices = findViewById(R.id.btn_findDevices);
@@ -132,20 +139,33 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
         listview_newDevices.setOnItemClickListener(AddContact.this);
 
 
-
-        btn_bluetoothOnOff.setOnClickListener(new View.OnClickListener() {
+        if(mybluetoothAdapter.isEnabled()){
+            btn_bluetoothOnOff.setChecked(true);
+        } else {
+            btn_bluetoothOnOff.setChecked(false);
+        }
+        btn_bluetoothOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                 bluetoothEnableDisable();
             }
         });
 
-        btn_bluetoothDiscovery.setOnClickListener(new View.OnClickListener() {
+        if ( mybluetoothAdapter.isDiscovering()){
+            btn_bluetoothDiscovery.setChecked(true);
+        } else {
+            btn_bluetoothDiscovery.setChecked(false);
+        }
+        btn_bluetoothDiscovery.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                Intent discoveryIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                discoveryIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 500);
-                startActivity(discoveryIntent);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked){
+                    Intent discoveryIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                    discoveryIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 500);
+                    startActivity(discoveryIntent);
+                }
+
             }
         });
 
