@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Meet &amp; Remind</string>
+    <string name="title_activity_reminder_detail">ReminderDetail</string>
+    <string name="title_activity_suggestion">Suggestion</string>
 </resources>

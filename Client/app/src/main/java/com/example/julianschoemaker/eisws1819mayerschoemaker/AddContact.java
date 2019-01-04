@@ -9,7 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -17,21 +16,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class AddContact extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    private static final String LOGTAG = "MainActivity";
+    private static final String LOGTAG = "AddContact";
 
 
     private static final String APP_NAME = "Meet And Remind";
@@ -93,10 +90,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     if (device.getBondState() == BluetoothDevice.BOND_BONDED){
                         Log.d(LOGTAG, "BroadcastReceiver: BOND_BONDED.");
-                        Intent activityIntent = new Intent(MainActivity.this, contact.class);
+                        Intent activityIntent = new Intent(AddContact.this, ContactDetail.class);
                         String bluetoothID = device.getAddress();
                         activityIntent.putExtra("BTID", bluetoothID);
-                        MainActivity.this.startActivity(activityIntent);
+                        AddContact.this.startActivity(activityIntent);
                     }
                 }
             } catch(NullPointerException e) {
@@ -115,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_add_contact);
 
         btn_bluetoothOnOff = findViewById(R.id.btn_bluetoothOnOff);
         btn_bluetoothDiscovery = findViewById(R.id.btn_bluetoothDiscovery);
@@ -132,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         mybluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        listview_newDevices.setOnItemClickListener(MainActivity.this);
+        listview_newDevices.setOnItemClickListener(AddContact.this);
 
 
 
@@ -176,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
                     // Discover Devices
+                    //TODO verkürzen. if... cancel } Rest
                     if (mybluetoothAdapter.isDiscovering()) {
                         mybluetoothAdapter.cancelDiscovery();
 
