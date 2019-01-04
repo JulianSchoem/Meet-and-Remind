@@ -1,6 +1,7 @@
 package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
 import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -66,44 +67,8 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
 
     TextView status;
 
-    private final BroadcastReceiver broadcastReceiverDevices = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            try {
-                if(action.equals(BluetoothDevice.ACTION_FOUND)) {
-                    BluetoothDevice devicelist = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    bluetoothDevicesList.add(devicelist);
-
-                    bluetoothDevicesAdapter = new BluetoothDevicesAdapter(context, R.layout.adapter_devices_view, bluetoothDevicesList);
-                    listview_newDevices.setAdapter(bluetoothDevicesAdapter);
-                }
-            } catch(NullPointerException e) {
-                System.out.print("NullPointerException Caught");
-            }
-        }
-    };
-
-    private final BroadcastReceiver broadcastReceiverBond = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            try {
-                if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
-                    device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                    if (device.getBondState() == BluetoothDevice.BOND_BONDED){
-                        Log.d(LOGTAG, "BroadcastReceiver: BOND_BONDED.");
-                        Intent activityIntent = new Intent(AddContact.this, ContactDetail.class);
-                        String bluetoothID = device.getAddress();
-                        activityIntent.putExtra("BTID", bluetoothID);
-                        AddContact.this.startActivity(activityIntent);
-                    }
-                }
-            } catch(NullPointerException e) {
-                System.out.print("NullPointerException Caught");
-            }
-        }
-    };
+    private BroadcastReceiver broadcastReceiverDevices;
+    private BroadcastReceiver broadcastReceiverBond;
 
     @Override
     protected void onDestroy() {
@@ -121,6 +86,48 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
         mToolbar.setTitle("Neuen Kontakt hinzufügen");
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
+        broadcastReceiverDevices = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                final String action = intent.getAction();
+                try {
+                    if(action.equals(BluetoothDevice.ACTION_FOUND)) {
+                        BluetoothDevice devicelist = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        bluetoothDevicesList.add(devicelist);
+
+                        bluetoothDevicesAdapter = new BluetoothDevicesAdapter(context, R.layout.adapter_devices_view, bluetoothDevicesList);
+                        listview_newDevices.setAdapter(bluetoothDevicesAdapter);
+                    }
+                } catch(NullPointerException e) {
+                    System.out.print("NullPointerException Caught");
+                }
+            }
+        };
+        broadcastReceiverBond = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final String action = intent.getAction();
+                try {
+                    if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                        device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                        if (device.getBondState() == BluetoothDevice.BOND_BONDED){
+                            Log.d(LOGTAG, "BroadcastReceiver: BOND_BONDED.");
+                            Intent activityIntent = new Intent(AddContact.this, ContactDetail.class);
+                            String bluetoothID = device.getAddress();
+                            activityIntent.putExtra("BTID", bluetoothID);
+                            AddContact.this.startActivity(activityIntent);
+                        }
+                    }
+                } catch(NullPointerException e) {
+                    System.out.print("NullPointerException Caught");
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(broadcastReceiverBond, filter);
+        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(broadcastReceiverDevices, intentFilter);
+
         btn_bluetoothOnOff = findViewById(R.id.btn_bluetoothOnOff);
         btn_bluetoothDiscovery = findViewById(R.id.btn_bluetoothDiscovery);
         btn_findDevices = findViewById(R.id.btn_findDevices);
@@ -131,8 +138,6 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
 
         bluetoothDevicesList = new ArrayList<>();
 
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        registerReceiver(broadcastReceiverBond, filter);
 
         mybluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -177,6 +182,7 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
                 if (!mybluetoothAdapter.isEnabled()) {
                     Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
+
                 } else {
 
                     Set<BluetoothDevice> bt = mybluetoothAdapter.getBondedDevices();
@@ -193,24 +199,15 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
 
 
                     // Discover Devices
-                    //TODO verkürzen. if... cancel } Rest
                     if (mybluetoothAdapter.isDiscovering()) {
                         mybluetoothAdapter.cancelDiscovery();
-
-                        checkBluetoothPermission();
-
-                        mybluetoothAdapter.startDiscovery();
-
-                        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                        registerReceiver(broadcastReceiverDevices, intentFilter);
-                    } else if (!mybluetoothAdapter.isDiscovering()) {
-                        checkBluetoothPermission();
-
-                        mybluetoothAdapter.startDiscovery();
-
-                        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                        registerReceiver(broadcastReceiverDevices, intentFilter);
                     }
+                    checkBluetoothPermission();
+
+                    mybluetoothAdapter.startDiscovery();
+
+                    IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                    registerReceiver(broadcastReceiverDevices, intentFilter);
 
                     ServerClass serverClass = new ServerClass();
                     serverClass.start();
@@ -225,7 +222,14 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
                 ClientClass clientClass = new ClientClass(device);
                 clientClass.start();
 
-                status.setText("Connecting");
+                status.setText("Connecting...");
+            }
+        });
+
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
 

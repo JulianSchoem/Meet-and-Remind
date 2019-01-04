@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class contact_item extends Fragment {
+public class ContactItem extends Fragment {
 
 
-    public contact_item() {
+    public ContactItem() {
         // Required empty public constructor
     }
 
@@ -25,5 +25,9 @@ public class contact_item extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_contact_item, container, false);
     }
+
+
+
+
 
 }
