@@ -7,21 +7,22 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ContactList extends AppCompatActivity {
 
     private FloatingActionButton fbtn_AddContact;
 
-    private ArrayList<ContactItem> contacts = new ArrayList<>();
+    private ListView listview_contactList;
 
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate(Bundle saveInstanceState) {
+        super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_contact_list);
+
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar1);
         mToolbar.setTitle(getString(R.string.app_name));
         fbtn_AddContact = findViewById(R.id.fab);
@@ -33,6 +34,11 @@ public class ContactList extends AppCompatActivity {
             }
         });
 
+        listview_contactList = (ListView) findViewById(R.id.listview_contactlist);
+
+        listview_contactList.setAdapter(new AdapterContactList(this, new String[] { "Michael",
+                "Ralf", "Mareike", "Petra" }));
     }
+
 
 }
