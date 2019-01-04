@@ -16,6 +16,7 @@ const db = admin.firestore();
 // Init Express
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 const settings = {
     port: process.env.PORT || 3000
 };
@@ -35,6 +36,7 @@ initRoutes();
  */
 
 function initServer() {
+    app.use( bodyParser.json() );
 
     app.get('/', function (req, res) {
         res.send('Hello World!');

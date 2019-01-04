@@ -17,71 +17,16 @@ const router = express.Router(null);
  */
 
 // Post user into firebase
-app.get('/', function (req, res) {
+router.get('/', function (req, res) {
 
-    console.log("HTTP Get Request");
-    var userReference = firebase.database().ref("/Users/");
-
-    //Attach an asynchronous callback to read the data
-    userReference.on("value",
-        function(snapshot) {
-            console.log(snapshot.val());
-            res.json(snapshot.val());
-            userReference.off("value");
-        },
-        function (errorObject) {
-            console.log("The read failed: " + errorObject.code);
-            res.send("The read failed: " + errorObject.code);
-        });
-});
-
-//Create new instance
-app.put('/', function (req, res) {
-
-    console.log("HTTP Put Request");
-
-    var userName = req.body.UserName;
-    var name = req.body.Name;
-    var age = req.body.Age;
-
-    var referencePath = '/Users/'+userName+'/';
-    var userReference = firebase.database().ref(referencePath);
-    userReference.set({Name: name, Age: age},
-        function(error) {
-            if (error) {
-                res.send("Data could not be saved." + error);
-            }
-            else {
-                res.send("Data saved successfully.");
-            }
-        });
 });
 
 //Update existing instance
-app.post('/', function (req, res) {
-
-    console.log("HTTP POST Request");
-
-    var userName = req.body.UserName;
-    var name = req.body.Name;
-    var age = req.body.Age;
-
-    var referencePath = '/Users/'+userName+'/';
-    var userReference = firebase.database().ref(referencePath);
-    userReference.update({Name: name, Age: age},
-        function(error) {
-            if (error) {
-                res.send("Data could not be updated." + error);
-            }
-            else {
-                res.send("Data updated successfully.");
-            }
-        });
+router.post('/', function (req, res) {
+    req.body.id = data.users.length;
+    data.users.push(req.body);
+    res.status(200).json({ uri: req.protocol+"://"+req.headers.host + "/users/" + req.body.id });
 });
 
-//Delete an instance
-app.delete('/', function (req, res) {
-
-    console.log("HTTP DELETE Request");
-    //todo
-});
+//Export as Module
+module.exports = router;
