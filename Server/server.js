@@ -1,4 +1,7 @@
-// EISWS1819MayerSchoemaker - Server with node.js
+// EISWS1819MayerSchoemaker by Johanna Mayer & Julian Schoemaker
+
+// to push this subtree to heroku: git subtree push --prefix Server heroku master
+// running on https://eisws1819mayerschoemaker.herokuapp.com/
 
 /************************************************************************
  * Inits & Modules
