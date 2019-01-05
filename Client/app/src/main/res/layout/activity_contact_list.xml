@@ -7,7 +7,7 @@
     tools:context=".ContactList">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar1"
+        android:id="@+id/toolbarList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -35,10 +35,9 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar1" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbarList" />
 
 </android.support.constraint.ConstraintLayout>

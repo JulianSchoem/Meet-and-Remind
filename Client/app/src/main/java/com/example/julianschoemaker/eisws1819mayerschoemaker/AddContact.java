@@ -85,6 +85,12 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("Neuen Kontakt hinzufügen");
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         broadcastReceiverDevices = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
@@ -223,13 +229,6 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
                 clientClass.start();
 
                 status.setText("Connecting...");
-            }
-        });
-
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
             }
         });
 
