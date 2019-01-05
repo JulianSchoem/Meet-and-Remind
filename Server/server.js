@@ -1,8 +1,8 @@
 // EISWS1819MayerSchoemaker - Server with node.js
 
-/**
- * Init modules
- */
+/************************************************************************
+ * Inits & Modules
+ ************************************************************************/
 
 // Init Firestore
 const admin = require("firebase-admin");
@@ -23,10 +23,11 @@ const settings = {
 
 // Init Route
 const usersRoute = require('./routes/users');
+const topicsRoute = require('./routes/topics');
 
-/**
- * Main
- */
+/************************************************************************
+ * Server Methodes
+ ************************************************************************/
 
 initServer();
 initRoutes();
@@ -43,7 +44,7 @@ function initServer() {
     });
 
     app.listen(settings.port, function(){
-        console.log("Dienstgeber ist nun auf Port " + settings.port+ " verfügbar");
+        console.log("Dienstgeber ist nun auf Port " + settings.port + " verfügbar");
     });
 
 }
@@ -54,4 +55,5 @@ function initServer() {
 
 function initRoutes() {
     app.use('/users',usersRoute);
+    app.use('/topics',topicsRoute);
 }
