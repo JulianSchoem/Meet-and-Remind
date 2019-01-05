@@ -47,8 +47,15 @@ router.get('/:uid', function (req, res) {
  */
 router.post('/', function (req, res) {
     let userID = req.body;
+    console.log("userID: " + userID.userID);
+    console.log("user route: " + USERS);
 
-    db.collection(USERS).doc(userID).collection(CONTACTS);
+    db.collection(USERS).doc(userID.userID).set({});
+    db.collection(USERS).doc(userID.userID).collection(CONTACTS).doc("blabals").set({});
+
+
+
+    res.status(200).send( { message: "Danke" });
 });
 
 /************************************************************************
