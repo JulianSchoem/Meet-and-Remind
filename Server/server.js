@@ -1,8 +1,11 @@
-// EISWS1819MayerSchoemaker - Server with node.js
+// EISWS1819MayerSchoemaker by Johanna Mayer & Julian Schoemaker
 
-/**
- * Init modules
- */
+// to push this subtree to heroku: git subtree push --prefix Server heroku master
+// running on https://eisws1819mayerschoemaker.herokuapp.com/
+
+/************************************************************************
+ * Inits & Modules
+ ************************************************************************/
 
 // Init Firestore
 const admin = require("firebase-admin");
@@ -23,10 +26,11 @@ const settings = {
 
 // Init Route
 const usersRoute = require('./routes/users');
+const topicsRoute = require('./routes/topics');
 
-/**
- * Main
- */
+/************************************************************************
+ * Server Methodes
+ ************************************************************************/
 
 initServer();
 initRoutes();
@@ -43,7 +47,7 @@ function initServer() {
     });
 
     app.listen(settings.port, function(){
-        console.log("Dienstgeber ist nun auf Port " + settings.port+ " verfügbar");
+        console.log("Dienstgeber ist nun auf Port " + settings.port + " verfügbar");
     });
 
 }
@@ -54,4 +58,5 @@ function initServer() {
 
 function initRoutes() {
     app.use('/users',usersRoute);
+    app.use('/topics',topicsRoute);
 }
