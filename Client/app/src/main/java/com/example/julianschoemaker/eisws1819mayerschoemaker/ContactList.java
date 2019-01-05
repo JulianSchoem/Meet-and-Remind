@@ -17,6 +17,8 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
     private ListView listview_contactList;
 
+    //TODO Bei Match Themenvorschlag blaues Icon!
+
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_contact_list);

@@ -1,20 +1,19 @@
 package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
 import android.content.Context;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-class AdapterContactList extends BaseAdapter {
+class AdapterReminderList extends BaseAdapter {
 
     Context context;
     String[] data;
     private static LayoutInflater inflater = null;
 
-    public AdapterContactList(Context context, String[] data) {
+    public AdapterReminderList(Context context, String[] data) {
         // Auto-generated constructor stub
         this.context = context;
         this.data = data;
@@ -45,7 +44,7 @@ class AdapterContactList extends BaseAdapter {
         // Auto-generated method stub
         View vi = convertView;
         if (vi == null)
-            vi = inflater.inflate(R.layout.contact_item, null);
+            vi = inflater.inflate(R.layout.remind_item, null);
         TextView txt_contactName = (TextView) vi.findViewById(R.id.txt_contactName);
         txt_contactName.setText(data[position]);
         return vi;

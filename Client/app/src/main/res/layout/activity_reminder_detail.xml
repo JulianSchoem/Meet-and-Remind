@@ -106,7 +106,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editText" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btn_info"
         android:layout_width="0dp"
         android:layout_height="38dp"
         android:layout_marginStart="16dp"

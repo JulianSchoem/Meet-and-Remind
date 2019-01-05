@@ -1,20 +1,24 @@
 package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 public class ReminderDetail extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     Toolbar mToolbar;
+    Button btn_info;
 
     ListView listview_labelList;
 
@@ -34,6 +38,29 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+
+        btn_info = findViewById(R.id.btn_info);
+        btn_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(ReminderDetail.this);
+                dialog.setCancelable(false);
+                dialog.setTitle("Thema einer Erinnerung");
+                dialog.setMessage("Du kannst Erinnerungen ein Thema zuweisen. " +
+                        "Mit diesen Themen kann dir das System Themenvorschläge liefern, " +
+                        "die dir im Gespräch weiterhelfen können. " +
+                        "Der Themenvorschlag erscheint als blaues Symbol bei der Kontaktliste" );
+                dialog.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        //Action for "cancel".
+                    }
+                });
+
+                final AlertDialog alert = dialog.create();
+                alert.show();
             }
         });
 
@@ -70,8 +97,10 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
                 img_check.setVisibility(View.VISIBLE);
                 oneIsChecked = true;
             }
-
         }
+
+        //TODO Label für Themenvorschlag beim Speichern übergeben
+        // TODO BUG: wenn Beschreibung länger, in Liste 2 Häkchen...
 
     }
 }
