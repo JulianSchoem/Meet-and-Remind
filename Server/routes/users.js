@@ -40,16 +40,15 @@ router.get('/:uid', function (req, res) {
     getDokumentAsJSON(USERS,userID).then(result => res.json(result));
 });
 
-// TODO POSt funktioniert nicht
-
+// TODO POST funktioniert nicht
 /**
  * POST one user
  * NOT NECESSARY BECAUSE WE CREATE A USER WHEN ADDING FIRST CONTACT
  */
 router.post('/', function (req, res) {
-    let user = req.body;
+    let userID = req.body;
 
-    db.collection(USERS).doc(user).set();
+    db.collection(USERS).doc(userID).collection(CONTACTS);
 });
 
 /************************************************************************
