@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
     private ListView listview_reminderList;
 
     ImageView img_delete;
+    FrameLayout fl_touch_area;
 
     Toolbar mToolbar;
 
@@ -75,8 +77,8 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-        img_delete = view.findViewById(R.id.img_delete);
-        img_delete.setOnClickListener(new View.OnClickListener() {
+        fl_touch_area = view.findViewById(R.id.touch_area_delete);
+        fl_touch_area.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                  AlertDialog.Builder dialog = new AlertDialog.Builder(ContactDetail.this);

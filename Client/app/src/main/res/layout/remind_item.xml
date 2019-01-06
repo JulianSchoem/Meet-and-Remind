@@ -13,8 +13,8 @@
 
         <TextView
             android:id="@+id/txt_contactName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="303dp"
+            android:layout_height="20dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="Name1"
@@ -24,8 +24,8 @@
 
         <TextView
             android:id="@+id/txt_contactReminder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="303dp"
+            android:layout_height="20dp"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:text="Letzte Erinnerung"
@@ -41,22 +41,30 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:orientation="vertical"
-            app:layout_constraintEnd_toStartOf="@+id/img_contactSuggestion"
             app:layout_constraintStart_toStartOf="parent">
 
         </LinearLayout>
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/img_delete"
-            android:layout_width="39dp"
+        <FrameLayout
+            android:id="@+id/touch_area_delete"
+            android:layout_width="84dp"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/ic_delete"
+            android:paddingLeft="30dp"
+            android:paddingTop="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/img_delete"
+                android:layout_width="36dp"
+                android:layout_height="35dp"
+                android:background="@drawable/ic_delete"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </FrameLayout>
 
     </android.support.constraint.ConstraintLayout>
 

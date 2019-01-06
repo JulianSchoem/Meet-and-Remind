@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 
@@ -16,6 +17,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     private FloatingActionButton fbtn_AddContact;
 
     private ListView listview_contactList;
+    FrameLayout touch_area_chat;
 
     //TODO Bei Match Themenvorschlag blaues Icon!
 
@@ -45,6 +47,16 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        touch_area_chat = view.findViewById(R.id.touch_area_chat);
+        touch_area_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    Intent suggestionIntent = new Intent(ContactList.this, Suggestion.class);
+                    startActivity(suggestionIntent);
+                }
+        });
+
         Intent activityIntent = new Intent(ContactList.this, ContactDetail.class);
         String bluetoothID = listview_contactList.getAdapter().getItem(position).toString();
         activityIntent.putExtra("BTID", bluetoothID);
