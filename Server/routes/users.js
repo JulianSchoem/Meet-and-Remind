@@ -252,14 +252,14 @@ router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
  ************************************************************************/
 
 /**
- * Returns the ID of a document in a specific collection
+ * Returns the ID of a document in a collection
  */
 getCollectionId = function(col) {
     return db.collection(col).doc().id;
 };
 
 /**
- * Returns a Promise that represents a specific collection in a document
+ * Returns a Promise that represents one collection in a document
  */
 getCollection =  function(col) {
     return new Promise(function (resolve) {
@@ -276,7 +276,7 @@ getCollection =  function(col) {
     });
 };
 /**
- * Returns a Promise that represents a specific document in a collection
+ * Returns a Promise that represents one document in a collection
  */
 getDocument = function(col,doc) {
     return new Promise(function (resolve) {
