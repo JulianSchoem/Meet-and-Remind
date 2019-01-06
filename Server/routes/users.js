@@ -106,7 +106,7 @@ router.post('/:uid/contacts', function (req, res) {
 });
 
 /**
- * POST name of contact to a user
+ * POST field 'name' of contact to a user
  */
 router.post('/:uid/contacts/:cid', function (req, res) {
     // get data out of body and url
@@ -127,7 +127,28 @@ router.post('/:uid/contacts/:cid', function (req, res) {
 });
 
 /**
- * POST topic of contact to a user
+ * PUT field 'name' of contact to a user (update)
+ */
+router.put('/:uid/contacts/:cid', function (req, res) {
+    // get data out of body and url
+    let name = req.body;
+    let userID = req.params.uid;
+    let contactID = req.params.cid;
+
+    // safe contact into firebase
+    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).update(name);
+
+    // generate URI
+    let contactURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID;
+
+    // set URI and finish POST
+    res.set('location', contactURI);
+    res.status(200);
+    res.json(name);
+});
+
+/**
+ * POST field 'topic' of contact to a user
  */
 router.post('/:uid/contacts/:cid', function (req, res) {
     // get data out of body and url
