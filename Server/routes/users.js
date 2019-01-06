@@ -37,7 +37,7 @@ router.get('/', function (req, res) {
  */
 router.get('/:uid', function (req, res) {
     let userID = req.params.uid;
-    getDokumentAsJSON(USERS,userID).then(result => res.json(result));
+    getDocumentAsJSON(USERS,userID).then(result => res.json(result));
 });
 
 /**
@@ -53,7 +53,7 @@ router.post('/', function (req, res) {
     db.collection(USERS).doc(userID).set({});
 
     // generate URI
-    let userURI = req.protocol + '://' + req.get('host') + req.originalUrl + "/" + userID;
+    let userURI = req.protocol + '://' + req.get('host') + req.originalUrl + '/' + userID;
 
     // set URI and finish POST
     res.set('location', userURI);
@@ -81,7 +81,7 @@ router.get('/:uid/contacts/:cid' ,function (req, res) {
     let userID = req.params.uid;
     let contactID = req.params.cid;
 
-    getDokumentAsJSON(USERS + '/' + userID + '/' + CONTACTS, contactID).then(result => res.json(result));
+    getDocumentAsJSON(USERS + '/' + userID + '/' + CONTACTS, contactID).then(result => res.json(result));
 });
 
 /**
@@ -97,7 +97,7 @@ router.post('/:uid/contacts', function (req, res) {
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({});
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + "/contacts/" + contactID;
+    let contactURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID;
 
     // set URI and finish POST
     res.set('location', contactURI);
@@ -118,7 +118,7 @@ router.post('/:uid/contacts/:cid', function (req, res) {
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(name, {merge: true});
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + "/contacts/" + contactID;
+    let contactURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID;
 
     // set URI and finish POST
     res.set('location', contactURI);
@@ -139,7 +139,7 @@ router.post('/:uid/contacts/:cid', function (req, res) {
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(topic, {merge: true});
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + "/contacts/" + contactID;
+    let contactURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID;
 
     // set URI and finish POST
     res.set('location', contactURI);
@@ -152,13 +152,74 @@ router.post('/:uid/contacts/:cid', function (req, res) {
  ************************************************************************/
 
 /**
- * GET all reminder for one contact of a user
+ * GET all reminder for one contact
  */
 router.get('/:uid/contacts/:cid/reminder' ,function (req, res) {
     let userID = req.params.uid;
     let contactID = req.params.cid;
 
     getCollectionAsJSON(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID + '/' + REMINDER).then(result => res.json(result));
+});
+
+/**
+ * GET one reminder for one contact
+ */
+router.get('/:uid/contacts/:cid/reminder/:rid' ,function (req, res) {
+    let userID = req.params.uid;
+    let contactID = req.params.cid;
+    let reminderID = req.params.rid;
+
+    getDocumentAsJSON(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID + '/' + REMINDER, reminderID).then(result => res.json(result));
+});
+
+/**
+ * POST reminder to contact
+ */
+router.post('/:uid/contacts/:cid/reminder', function (req, res) {
+    // get data out of body and url
+    let reminder = req.body;
+    let userID = req.params.uid;
+    let contactID = req.params.cid;
+    let reminderID = getIdInCollection(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID  + '/' + REMINDER);
+
+    // safe contact into firebase
+    db.collection(USERS).doc(userID)
+        .collection(CONTACTS).doc(contactID)
+        .collection(REMINDER).doc(reminderID).set(reminder);
+
+    // generate URI
+    let reminderURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID + '/reminder/' + reminderID ;
+
+    console.log('reminderID  ' + reminderID);
+
+    // set URI and finish POST
+    res.set('location', reminderURI);
+    res.status(200);
+    res.json(reminder);
+});
+
+/**
+ * PUT reminder to contact (update on reminder)
+ */
+router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
+    // get data out of body and url
+    let reminder = req.body;
+    let userID = req.params.uid;
+    let contactID = req.params.cid;
+    let reminderID = req.params.rid;
+
+    // safe contact into firebase
+    db.collection(USERS).doc(userID)
+        .collection(CONTACTS).doc(contactID)
+        .collection(REMINDER).doc(reminderID).set(reminder, {merge: true});
+
+    // generate URI
+    let reminderURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID + '/reminder/' + reminderID ;
+
+    // set URI and finish POST
+    res.set('location', reminderURI);
+    res.status(200);
+    res.json(reminder);
 });
 
 
@@ -179,7 +240,7 @@ getIdInCollection = function(collectionName) {
     let id = ref.id;
 
     return id;
-}
+};
 /**
  * Returns a Promise that is to be resolved as a JSON and represents a specific collection (GET)
  * @param collectionName naem of the collecetion
@@ -207,7 +268,7 @@ getCollectionAsJSON =  function(collectionName) {
  * @param docName name of the documeten
  * @returns {Promise<JSON>} Promise that resolves as JSON
  */
-getDokumentAsJSON = function(collectionName,docName) {
+getDocumentAsJSON = function(collectionName,docName) {
     return new Promise(function (resolve) {
         let json = {};
 
@@ -219,22 +280,6 @@ getDokumentAsJSON = function(collectionName,docName) {
             }).then(function () {
             resolve(json);
         });
-    });
-};
-/**
- * Returns a Promise that is to be resolved as a boolean that shows us if a ID exists in a collection
- * @param collectionName name of the collection
- * @param docName name of the document
- * @returns {Promise<boolean>} Promise that resolves as bool
- */
-checkIfDocInCollection = function(collectionName, docName) {
-    return new Promise(function (resolve) {
-        // Test for the existence of certain keys within a DataSnapshot;
-        db.collection(collectionName).doc(docName).get()
-            .then(function(snapshot) {
-                let idExists = snapshot.exists;
-                resolve(idExists);
-            });
     });
 };
 
