@@ -246,60 +246,47 @@ router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
 
 
 /************************************************************************
- * Functions
- * Used from WBA2 Project
- * https://github.com/Fasust/WBA2SS18FaustTissenSchoemaker
+ * Helper Functions
+ * Implemented to avoid redundancy
+ * From Firebase 'Cloud Firestore' Documentation https://firebase.google.com/docs/firestore
  ************************************************************************/
 
 /**
- * Returns a unigue ID in a specific collection
- * @param collectionName name of the collection that a id is to be generated for
- * @returns int id unique ID
+ * Returns the ID of a document in a specific collection
  */
-getIdInCollection = function(collectionName) {
-    let ref = db.collection(collectionName).doc();
-    let id = ref.id;
-
-    return id;
+getIdInCollection = function(col) {
+    return db.collection(col).doc().id;
 };
+
 /**
- * Returns a Promise that is to be resolved as a JSON and represents a specific collection (GET)
- * @param collectionName naem of the collecetion
- * @returns {Promise<JSON>} Promise that resolves as JSON
+ * Returns a Promise that represents a specific collection in a document
  */
-getCollectionAsJSON =  function(collectionName) {
+getCollectionAsJSON =  function(col) {
     return new Promise(function (resolve) {
         let json = {};
 
-        let collection = db.collection(collectionName);
+        let collection = db.collection(col);
         collection.get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
-
                     json[doc.id] = doc.data();
                 });
-            }).then(function () {
-            resolve(json);
+            }).then(function () {resolve(json);
         });
     });
 };
 /**
- * Returns a Promise that is to be resolved as a JSON and represents a specific document in a collection (GET)
- * @param collectionName name of the collection
- * @param docName name of the documeten
- * @returns {Promise<JSON>} Promise that resolves as JSON
+ * Returns a Promise that represents a specific document in a collection
  */
-getDocumentAsJSON = function(collectionName,docName) {
+getDocumentAsJSON = function(col,doc) {
     return new Promise(function (resolve) {
         let json = {};
 
-        let document = db.collection(collectionName).doc(docName);
+        let document = db.collection(col).doc(doc);
         document.get()
             .then(doc => {
                 json = doc.data();
-
-            }).then(function () {
-            resolve(json);
+            }).then(function () {resolve(json);
         });
     });
 };
