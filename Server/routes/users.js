@@ -40,22 +40,25 @@ router.get('/:uid', function (req, res) {
     getDokumentAsJSON(USERS,userID).then(result => res.json(result));
 });
 
-// TODO POST funktioniert nicht
 /**
  * POST one user
  * NOT NECESSARY BECAUSE WE CREATE A USER WHEN ADDING FIRST CONTACT
  */
 router.post('/', function (req, res) {
-    let userID = req.body;
-    console.log("userID: " + userID.userID);
-    console.log("user route: " + USERS);
+    // get data out of body and url
+    let user = req.body;
+    let userID = user.userID;
 
-    db.collection(USERS).doc(userID.userID).set({});
-    db.collection(USERS).doc(userID.userID).collection(CONTACTS).doc("blabals").set({});
+    // safe user into firebase
+    db.collection(USERS).doc(userID).set({});
 
+    // generate URI
+    let userURI = req.protocol + '://' + req.get('host') + req.originalUrl + "/" + userID;
 
-
-    res.status(200).send( { message: "Danke" });
+    // set URI and finish POST
+    res.set('location', userURI);
+    res.status(200);
+    res.json(user);
 });
 
 /************************************************************************
@@ -82,15 +85,66 @@ router.get('/:uid/contacts/:cid' ,function (req, res) {
 });
 
 /**
- * POST one contact of a user
+ * POST one contact to a user
  */
 router.post('/:uid/contacts', function (req, res) {
+    // get data out of body and url
     let contact = req.body;
-    let contactID = contact.contact;
+    let contactID = contact.contactID;
     let userID = req.params.uid;
 
-    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(contact);
+    // safe contact into firebase
+    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({});
 
+    // generate URI
+    let contactURI = req.protocol + '://' + req.get('host') + "/contacts/" + contactID;
+
+    // set URI and finish POST
+    res.set('location', contactURI);
+    res.status(200);
+    res.json(contact);
+});
+
+/**
+ * POST name of contact to a user
+ */
+router.post('/:uid/contacts/:cid', function (req, res) {
+    // get data out of body and url
+    let name = req.body;
+    let userID = req.params.uid;
+    let contactID = req.params.cid;
+
+    // safe contact into firebase
+    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(name, {merge: true});
+
+    // generate URI
+    let contactURI = req.protocol + '://' + req.get('host') + "/contacts/" + contactID;
+
+    // set URI and finish POST
+    res.set('location', contactURI);
+    res.status(200);
+    res.json(name);
+});
+
+/**
+ * POST topic of contact to a user
+ */
+router.post('/:uid/contacts/:cid', function (req, res) {
+    // get data out of body and url
+    let topic = req.body;
+    let userID = req.params.uid;
+    let contactID = req.params.cid;
+
+    // safe contact into firebase
+    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(topic, {merge: true});
+
+    // generate URI
+    let contactURI = req.protocol + '://' + req.get('host') + "/contacts/" + contactID;
+
+    // set URI and finish POST
+    res.set('location', contactURI);
+    res.status(200);
+    res.json(topic);
 });
 
 /************************************************************************
