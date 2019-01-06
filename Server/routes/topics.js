@@ -32,29 +32,25 @@ router.get('/', function (req, res) {
 
 
 /************************************************************************
- * Functions
- * Used from WBA2 Project
- * https://github.com/Fasust/WBA2SS18FaustTissenSchoemaker
+ * Helper Functions
+ * Implemented to avoid redundancy
+ * From Firebase 'Cloud Firestore' Documentation https://firebase.google.com/docs/firestore
  ************************************************************************/
 
 /**
- * Returns a Promise that is to be resolved as a JSON and represents a specific collection (GET)
- * @param collectionName naem of the collecetion
- * @returns {Promise<JSON>} Promise that resolves as JSON
+ * Returns a Promise that represents a specific collection in a document
  */
-getCollectionAsJSON =  function(collectionName) {
+getCollection =  function(col) {
     return new Promise(function (resolve) {
         let json = {};
 
-        let collection = db.collection(collectionName);
+        let collection = db.collection(col);
         collection.get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
-
                     json[doc.id] = doc.data();
                 });
-            }).then(function () {
-            resolve(json);
+            }).then(function () {resolve(json);
         });
     });
 };

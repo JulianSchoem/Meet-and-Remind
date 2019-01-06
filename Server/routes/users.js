@@ -29,7 +29,7 @@ const REMINDER = "reminder";
  * GET all users
  */
 router.get('/', function (req, res) {
-    getCollectionAsJSON(USERS).then(result => res.json(result))
+    getCollection(USERS).then(result => res.json(result))
 });
 
 /**
@@ -37,7 +37,7 @@ router.get('/', function (req, res) {
  */
 router.get('/:uid', function (req, res) {
     let userID = req.params.uid;
-    getDocumentAsJSON(USERS,userID).then(result => res.json(result));
+    getDocument(USERS,userID).then(result => res.json(result));
 });
 
 /**
@@ -71,7 +71,7 @@ router.post('/', function (req, res) {
 router.get('/:uid/contacts' ,function (req, res) {
     let userID = req.params.uid;
 
-    getCollectionAsJSON(USERS + '/' + userID + '/' + CONTACTS).then(result => res.json(result));
+    getCollection(USERS + '/' + userID + '/' + CONTACTS).then(result => res.json(result));
 });
 
 /**
@@ -81,7 +81,7 @@ router.get('/:uid/contacts/:cid' ,function (req, res) {
     let userID = req.params.uid;
     let contactID = req.params.cid;
 
-    getDocumentAsJSON(USERS + '/' + userID + '/' + CONTACTS, contactID).then(result => res.json(result));
+    getDocument(USERS + '/' + userID + '/' + CONTACTS, contactID).then(result => res.json(result));
 });
 
 /**
@@ -179,7 +179,7 @@ router.get('/:uid/contacts/:cid/reminder' ,function (req, res) {
     let userID = req.params.uid;
     let contactID = req.params.cid;
 
-    getCollectionAsJSON(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID + '/' + REMINDER).then(result => res.json(result));
+    getCollection(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID + '/' + REMINDER).then(result => res.json(result));
 });
 
 /**
@@ -190,7 +190,7 @@ router.get('/:uid/contacts/:cid/reminder/:rid' ,function (req, res) {
     let contactID = req.params.cid;
     let reminderID = req.params.rid;
 
-    getDocumentAsJSON(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID + '/' + REMINDER, reminderID).then(result => res.json(result));
+    getDocument(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID + '/' + REMINDER, reminderID).then(result => res.json(result));
 });
 
 /**
@@ -201,7 +201,7 @@ router.post('/:uid/contacts/:cid/reminder', function (req, res) {
     let reminder = req.body;
     let userID = req.params.uid;
     let contactID = req.params.cid;
-    let reminderID = getIdInCollection(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID  + '/' + REMINDER);
+    let reminderID = getCollectionId(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID  + '/' + REMINDER);
 
     // safe contact into firebase
     db.collection(USERS).doc(userID)
@@ -254,14 +254,14 @@ router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
 /**
  * Returns the ID of a document in a specific collection
  */
-getIdInCollection = function(col) {
+getCollectionId = function(col) {
     return db.collection(col).doc().id;
 };
 
 /**
  * Returns a Promise that represents a specific collection in a document
  */
-getCollectionAsJSON =  function(col) {
+getCollection =  function(col) {
     return new Promise(function (resolve) {
         let json = {};
 
@@ -278,7 +278,7 @@ getCollectionAsJSON =  function(col) {
 /**
  * Returns a Promise that represents a specific document in a collection
  */
-getDocumentAsJSON = function(col,doc) {
+getDocument = function(col,doc) {
     return new Promise(function (resolve) {
         let json = {};
 
