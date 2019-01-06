@@ -57,7 +57,7 @@ router.post('/', function (req, res) {
 
     // set URI and finish POST
     res.set('location', userURI);
-    res.status(200);
+    res.status(201);
     res.json(user);
 });
 
@@ -101,7 +101,7 @@ router.post('/:uid/contacts', function (req, res) {
 
     // set URI and finish POST
     res.set('location', contactURI);
-    res.status(200);
+    res.status(201);
     res.json(contact);
 });
 
@@ -114,7 +114,7 @@ router.post('/:uid/contacts/:cid', function (req, res) {
     let userID = req.params.uid;
     let contactID = req.params.cid;
 
-    // safe contact into firebase
+    // safe name into firebase
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(name, {merge: true});
 
     // generate URI
@@ -122,7 +122,7 @@ router.post('/:uid/contacts/:cid', function (req, res) {
 
     // set URI and finish POST
     res.set('location', contactURI);
-    res.status(200);
+    res.status(201);
     res.json(name);
 });
 
@@ -135,7 +135,7 @@ router.put('/:uid/contacts/:cid', function (req, res) {
     let userID = req.params.uid;
     let contactID = req.params.cid;
 
-    // safe contact into firebase
+    // safe name into firebase
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).update(name);
 
     // generate URI
@@ -156,7 +156,7 @@ router.post('/:uid/contacts/:cid', function (req, res) {
     let userID = req.params.uid;
     let contactID = req.params.cid;
 
-    // safe contact into firebase
+    // safe topic into firebase
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(topic, {merge: true});
 
     // generate URI
@@ -164,7 +164,7 @@ router.post('/:uid/contacts/:cid', function (req, res) {
 
     // set URI and finish POST
     res.set('location', contactURI);
-    res.status(200);
+    res.status(201);
     res.json(topic);
 });
 
@@ -176,6 +176,7 @@ router.post('/:uid/contacts/:cid', function (req, res) {
  * GET all reminder for one contact
  */
 router.get('/:uid/contacts/:cid/reminder' ,function (req, res) {
+    // get data out of body and url
     let userID = req.params.uid;
     let contactID = req.params.cid;
 
@@ -184,8 +185,10 @@ router.get('/:uid/contacts/:cid/reminder' ,function (req, res) {
 
 /**
  * GET one reminder for one contact
+ * GET priority of one reminder to increase it in 'Clientseitige Anwendungslogik'
  */
 router.get('/:uid/contacts/:cid/reminder/:rid' ,function (req, res) {
+    // get data out of body and url
     let userID = req.params.uid;
     let contactID = req.params.cid;
     let reminderID = req.params.rid;
@@ -203,7 +206,7 @@ router.post('/:uid/contacts/:cid/reminder', function (req, res) {
     let contactID = req.params.cid;
     let reminderID = getCollectionId(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID  + '/' + REMINDER);
 
-    // safe contact into firebase
+    // safe reminder into firebase
     db.collection(USERS).doc(userID)
         .collection(CONTACTS).doc(contactID)
         .collection(REMINDER).doc(reminderID).set(reminder);
@@ -211,16 +214,15 @@ router.post('/:uid/contacts/:cid/reminder', function (req, res) {
     // generate URI
     let reminderURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID + '/reminder/' + reminderID ;
 
-    console.log('reminderID  ' + reminderID);
-
     // set URI and finish POST
     res.set('location', reminderURI);
-    res.status(200);
+    res.status(201);
     res.json(reminder);
 });
 
 /**
- * PUT reminder to contact (update on reminder)
+ * PUT one reminder of a contact (update on reminder)
+ * PUT priority of one reminder after increase in 'Clientseitige Anwendungslogik'
  */
 router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
     // get data out of body and url
@@ -229,10 +231,10 @@ router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
     let contactID = req.params.cid;
     let reminderID = req.params.rid;
 
-    // safe contact into firebase
+    // safe reminder into firebase
     db.collection(USERS).doc(userID)
         .collection(CONTACTS).doc(contactID)
-        .collection(REMINDER).doc(reminderID).set(reminder, {merge: true});
+        .collection(REMINDER).doc(reminderID).update(reminder);
 
     // generate URI
     let reminderURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID + '/reminder/' + reminderID ;
@@ -243,7 +245,19 @@ router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
     res.json(reminder);
 });
 
+/**
+ * DELETE one reminder of a contact
+ */
+router.delete('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
+    // get data out of body and url
+    let userID = req.params.uid;
+    let contactID = req.params.cid;
+    let reminderID = req.params.rid;
 
+    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).collection(REMINDER).doc(reminderID).delete();
+    res.status(200);
+    res.send('Deleted: ' + reminderID);
+});
 
 /************************************************************************
  * Helper Functions
