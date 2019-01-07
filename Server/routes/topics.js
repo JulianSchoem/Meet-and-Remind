@@ -27,7 +27,7 @@ const TOPICS = "topics";
  * GET all topics
  */
 router.get('/', function (req, res) {
-    getCollectionAsJSON(TOPICS).then(result => res.json(result))
+    getCollection(TOPICS).then(result => res.json(result))
 });
 
 
