@@ -38,7 +38,6 @@ initRoutes();
 /**
  * Init Server
  */
-
 function initServer() {
     app.use( bodyParser.json() );
 

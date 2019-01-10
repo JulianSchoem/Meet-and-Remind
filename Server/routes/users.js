@@ -260,6 +260,90 @@ router.delete('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
 });
 
 /************************************************************************
+ * Serverseitige Anwendungslogik
+ ************************************************************************/
+
+    /*
+        alle User nehmen
+        UserID speichern
+
+        alle Contacts der Users nehmen
+        ContactID speichern
+
+        alle Erinnerungen zu dem Contact nehmen
+        davon die labels speichern
+
+        Umdrehen:
+        ContactID -> UserID
+        alle Erinnerungen nehmen
+        davon alle labels speichern
+
+        labels matchen
+
+        anzahlen berechnen
+
+        höchste anzahl bestimmten
+
+        main topic sowohl in den User als auch den Contact einsetzen
+     */
+
+
+// http://localhost:3000/users/client
+router.post('/client', function (req, res) {
+
+    // Get all users
+    let usersArray = [];
+    usersArray = {
+        "0C:8F:FF:C7:92:2C": {},
+        "54:27:58:24:B2:7F": {},
+    };
+
+    // für alle user
+    var contactsArray = [];
+    for (var i in usersArray) {
+
+        // contacts of the user
+        contact = db.collection(USERS).doc(i).collection(CONTACTS).get()
+            .then(snapshot => {
+                if (snapshot.empty) {
+                    console.log('No matching documents.');
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+
+
+                    // die reminder raus suchen
+
+                    console.log(doc.id, '=>', doc.data());
+
+
+
+
+
+
+                });
+            })
+            .catch(err => {
+                console.log('Error getting documents', err);
+            });
+
+        contactsArray.push(contact);
+        console.log(i + ": contact :" + contact);
+    }
+
+    console.log("Kontakte: " + contactsArray);
+
+    res.status(200);
+});
+
+
+
+
+
+
+
+/************************************************************************
  * Helper Functions
  * Implemented to avoid redundancy
  * From Firebase 'Cloud Firestore' Documentation https://firebase.google.com/docs/firestore
