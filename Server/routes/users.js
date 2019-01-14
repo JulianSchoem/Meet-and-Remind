@@ -272,41 +272,67 @@ getAllUsers = function() {
         usersCollection.get()
             .then(snapshot => {
                 snapshot.forEach(user => {
-                    userArray.push(user.id);
+                    let userTmp = user.id;
+                    userArray.push({ userID : userTmp });
                 });
             })
             .then(function () {
                 resolve(userArray);
             });
     });
-};
+}.then(function(res) {
+    userArray.forEach(user => {
 
-getAllUsers().then(function(res) {
-    contactArray = [];
+        user.contacts = [];
 
-    userArray.forEach(userID => {
-
-        console.log("User ist " + userID);
-
-        contactCollection = db.collection(USERS).doc(userID).collection(CONTACTS);
+        contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
 
         return promise = new Promise(function(resolve, reject) {
 
             contactCollection.get()
                 .then(snapshot => {
                     snapshot.forEach(contact => {
-                        userArray[userID] = [];
-
+                        let contactTmp = contact.id;
+                        user.contacts.push({ contactID : contactTmp});
 
 
                         console.log("Contact: " + contact.id);
-                        console.log("Gesamtes Array: " + userArray[userID][contact.id]);
+                        console.log("Gesamtes Array: " + JSON.stringify(user));
                     });
                 })
                 .then(function () {
-                    resolve(userArray);
+                    resolve(user);
                 });
         });
+
+        }
+    )
+
+}).then(function () {
+
+    user.forEach(contact => {
+
+            contact.reminder = [];
+
+            reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).collection(REMINDER);
+
+            return promise = new Promise(function(resolve, reject) {
+
+                reminderCollection.get()
+                    .then(snapshot => {
+                        snapshot.forEach(reminder => {
+                            let reminderTmp = reminder.id.label;
+                            user.contacts.push({ contactID : contactTmp});
+
+
+                            console.log("Contact: " + contact.id);
+                            console.log("Gesamtes Array: " + JSON.stringify(user));
+                        });
+                    })
+                    .then(function () {
+                        resolve(user);
+                    });
+            });
 
         }
     )
@@ -315,6 +341,7 @@ getAllUsers().then(function(res) {
 
 
 
+getAllusers().then(function (res) {}).then()
 
 
 /************************************************************************
