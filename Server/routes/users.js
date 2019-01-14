@@ -311,6 +311,8 @@ getLabels = function() {
 
     }).then(function (user) {
 
+        console.log("Reminder Part: " + JSON.stringify(user));
+
         user.contacts.forEach(contact => {
 
             user.contacts.reminder = [];
