@@ -281,6 +281,7 @@ getAllUsers = function() {
             });
     });
 }.then(function(res) {
+
     userArray.forEach(user => {
 
         user.contacts = [];
@@ -295,8 +296,6 @@ getAllUsers = function() {
                         let contactTmp = contact.id;
                         user.contacts.push({ contactID : contactTmp});
 
-
-                        console.log("Contact: " + contact.id);
                         console.log("Gesamtes Array: " + JSON.stringify(user));
                     });
                 })
@@ -310,9 +309,9 @@ getAllUsers = function() {
 
 }).then(function () {
 
-    user.forEach(contact => {
+    user.contacts.forEach(contact => {
 
-            contact.reminder = [];
+            user.contacts.reminder = [];
 
             reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).collection(REMINDER);
 
@@ -322,10 +321,9 @@ getAllUsers = function() {
                     .then(snapshot => {
                         snapshot.forEach(reminder => {
                             let reminderTmp = reminder.id.label;
-                            user.contacts.push({ contactID : contactTmp});
+                            user.contacts.reminder.push({ reminderLabel : reminderTmp});
 
-
-                            console.log("Contact: " + contact.id);
+                            console.log("Reminder: " + user.contacts.reminder);
                             console.log("Gesamtes Array: " + JSON.stringify(user));
                         });
                     })
@@ -339,9 +337,6 @@ getAllUsers = function() {
 
 });
 
-
-
-getAllusers().then(function (res) {}).then()
 
 
 /************************************************************************
