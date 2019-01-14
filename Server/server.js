@@ -38,12 +38,14 @@ initRoutes();
 /**
  * Init Server
  */
-
 function initServer() {
     app.use( bodyParser.json() );
 
     app.get('/', function (req, res) {
-        res.send('Hello World!');
+        res.send('<h1>Entwicklungsprojekt interaktive Systeme</h1>\n' +
+            '<h2>Wintersemester 2018/2019 an der TH Köln</h2>\n' +
+            '<h3>Meet & Remind - Johanna Mayer und Julian Schoemaker</h3>'
+        );
     });
 
     app.listen(settings.port, function(){

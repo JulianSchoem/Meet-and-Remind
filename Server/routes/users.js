@@ -260,6 +260,64 @@ router.delete('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
 });
 
 /************************************************************************
+ * Serverseitige Anwendungslogik
+ ************************************************************************/
+
+getAllUsers = function() {
+    userArray = [];
+    usersCollection = db.collection(USERS);
+
+    return promise = new Promise(function(resolve, reject) {
+
+        usersCollection.get()
+            .then(snapshot => {
+                snapshot.forEach(user => {
+                    userArray.push(user.id);
+                });
+            })
+            .then(function () {
+                resolve(userArray);
+            });
+    });
+};
+
+getAllUsers().then(function(res) {
+    contactArray = [];
+
+    userArray.forEach(userID => {
+
+        console.log("User ist " + userID);
+
+        contactCollection = db.collection(USERS).doc(userID).collection(CONTACTS);
+
+        return promise = new Promise(function(resolve, reject) {
+
+            contactCollection.get()
+                .then(snapshot => {
+                    snapshot.forEach(contact => {
+                        userArray[userID] = [];
+
+
+
+                        console.log("Contact: " + contact.id);
+                        console.log("Gesamtes Array: " + userArray[userID][contact.id]);
+                    });
+                })
+                .then(function () {
+                    resolve(userArray);
+                });
+        });
+
+        }
+    )
+
+});
+
+
+
+
+
+/************************************************************************
  * Helper Functions
  * Implemented to avoid redundancy
  * From Firebase 'Cloud Firestore' Documentation https://firebase.google.com/docs/firestore
