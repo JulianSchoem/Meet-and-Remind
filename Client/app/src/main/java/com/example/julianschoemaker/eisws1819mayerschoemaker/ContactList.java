@@ -1,15 +1,20 @@
 package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
+import android.annotation.SuppressLint;
+import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.ResultReceiver;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 public class ContactList extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -43,7 +48,15 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
 
         listview_contactList.setOnItemClickListener(ContactList.this);
-    }
+
+        //Notify Service
+        MessageReceiver receiver = new MessageReceiver(new Message());
+        Intent serviceIntent = new Intent(this, NotifyService.class);
+        serviceIntent.putExtra("time", 10);
+        serviceIntent.putExtra("receiver", receiver);
+        startService(serviceIntent);
+
+        }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -62,5 +75,15 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         activityIntent.putExtra("BTID", bluetoothID);
         startActivity(activityIntent);
     }
+
+    public class Message {
+
+        public void displayMessage(int resultCode, Bundle resultData) {
+
+            String message = resultData.getString("message");
+            Toast.makeText(ContactList.this, resultCode + " " + message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 }

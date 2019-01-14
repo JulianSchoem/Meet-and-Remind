@@ -33,7 +33,8 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
         setContentView(R.layout.activity_contact_detail);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbarDetailC);
-        mToolbar.setTitle("Name");
+        BlueID = getIntent().getExtras().getString(BlueID);
+        mToolbar.setTitle(BlueID);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,8 +65,7 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
     @Override
     protected void onResume() {
         super.onResume();
-        BlueID = getIntent().getExtras().getString(BlueID);
-        mToolbar.setTitle(BlueID);
+
 
     }
 
