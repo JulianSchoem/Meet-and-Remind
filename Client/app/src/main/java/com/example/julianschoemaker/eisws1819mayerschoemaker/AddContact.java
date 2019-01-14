@@ -1,11 +1,14 @@
 package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
@@ -19,6 +22,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.os.ResultReceiver;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
@@ -241,12 +245,30 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
         listview_bondedDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BluetoothDevice device = pairedDevicesList.get(position);
+                /**BluetoothDevice device = pairedDevicesList.get(position);
                 ClientClass clientClass = new ClientClass(device);
-                clientClass.start();
+                clientClass.start();**/
 
-                status.setText("Connecting...");
-                sendNotification();
+                ClientClass arrayClients[] = new ClientClass[pairedDevicesList.size()];
+                for ( int i = 0; i<pairedDevicesList.size(); i++){
+                    BluetoothDevice device = pairedDevicesList.get(i);
+                    arrayClients[i] = new ClientClass(device);
+                }
+                for ( ClientClass each : arrayClients){
+                    //TODO starten, warten... wenn Connection Failed, dann Schleife von oben neu beginnen...
+                    each.start();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (handler.obtainMessage().equals("Connected")){
+                        status.setText("WOW");
+                        break;
+                    }
+                    status.setText("Connecting...");
+                }
+
             }
         });
 
@@ -255,7 +277,7 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
     public void sendNotification(){
         NotificationManager nm = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         Intent resultIntent = new Intent(getApplicationContext(), ReminderDetail.class);
-        // TODO which Reminder Detail? putExtra()!
+        // TODO which Reminder Detail? putExtra()/Parameter..!
         resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent resultPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -412,8 +434,8 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
                 message.what = STATE_CONNECTED;
                 handler.sendMessage(message);
                //TODO Configure Push Notification
-                //device.getName() getReminder...
                 sendNotification();
+                //device.getName() getReminder...
 
             }
             catch (IOException e) {
@@ -425,6 +447,9 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
 
         }
 
+
     }
+
+
 
 }
