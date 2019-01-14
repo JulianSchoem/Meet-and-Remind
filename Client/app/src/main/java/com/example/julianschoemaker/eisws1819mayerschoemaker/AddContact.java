@@ -2,6 +2,9 @@ package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -10,8 +13,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -33,6 +42,8 @@ import java.util.UUID;
 public class AddContact extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final String LOGTAG = "AddContact";
+    private static final int NOTIFICATION_ID = 1;
+    private static final String NOTIFICATION_CHANNEL_ID = "my_notification_channel";
 
 
     private static final String APP_NAME = "Meet And Remind";
@@ -221,6 +232,12 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
             }
         });
 
+        /**TODO Seperater Thread, der im Hintergrund läuft (am besten auch, wenn App geschlossen)
+         * Erkennt Connected
+         * Schickt dann Push Notification, wenn Erinnerung zur Person erstellt wurde
+         */
+
+
         listview_bondedDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -229,9 +246,36 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
                 clientClass.start();
 
                 status.setText("Connecting...");
+                sendNotification();
             }
         });
 
+    }
+
+    public void sendNotification(){
+        NotificationManager nm = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent resultIntent = new Intent(getApplicationContext(), ReminderDetail.class);
+        // TODO which Reminder Detail? putExtra()!
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel nChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+
+            //Configure
+            nChannel.enableLights(true);
+            nChannel.setLightColor(Color.CYAN);
+            nm.createNotificationChannel(nChannel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setSmallIcon(R.drawable.logo_meet_remind)
+                .setContentTitle("Titel der Erinnerung")
+                .setContentText("Beschreibung der Erinnerung")
+                .setContentIntent(resultPendingIntent);
+
+        nm.notify(NOTIFICATION_ID, builder.build());
     }
 
     public void bluetoothEnableDisable() {
@@ -290,9 +334,7 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
                 case STATE_MESSAGE_RECEIVED:
                     status.setText("Received");
                     break;
-
             }
-
             return false;
         }
     });
@@ -369,10 +411,13 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
                 Message message = Message.obtain();
                 message.what = STATE_CONNECTED;
                 handler.sendMessage(message);
+               //TODO Configure Push Notification
+                //device.getName() getReminder...
+                sendNotification();
+
             }
             catch (IOException e) {
                 e.printStackTrace();
-
                 Message message = Message.obtain();
                 message.what = STATE_CONNECTION_FAILED;
                 handler.sendMessage(message);
