@@ -263,81 +263,51 @@ router.delete('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
  * Serverseitige Anwendungslogik
  ************************************************************************/
 
-    /*
-        alle User nehmen
-        UserID speichern
+getAllUsers = function() {
+    userArray = [];
+    usersCollection = db.collection(USERS);
 
-        alle Contacts der Users nehmen
-        ContactID speichern
+    return promise = new Promise(function(resolve, reject) {
 
-        alle Erinnerungen zu dem Contact nehmen
-        davon die labels speichern
-
-        Umdrehen:
-        ContactID -> UserID
-        alle Erinnerungen nehmen
-        davon alle labels speichern
-
-        labels matchen
-
-        anzahlen berechnen
-
-        höchste anzahl bestimmten
-
-        main topic sowohl in den User als auch den Contact einsetzen
-     */
-
-
-// http://localhost:3000/users/client
-router.post('/client', function (req, res) {
-
-    // Get all users
-    let usersArray = [];
-    usersArray = {
-        "0C:8F:FF:C7:92:2C": {},
-        "54:27:58:24:B2:7F": {},
-    };
-
-    // für alle user
-    var contactsArray = [];
-    for (var i in usersArray) {
-
-        // contacts of the user
-        contact = db.collection(USERS).doc(i).collection(CONTACTS).get()
+        usersCollection.get()
             .then(snapshot => {
-                if (snapshot.empty) {
-                    console.log('No matching documents.');
-                    return;
-                }
-
-                snapshot.forEach(doc => {
-
-
-                    // die reminder raus suchen
-
-                    console.log(doc.id, '=>', doc.data());
-
-
-
-
-
-
+                snapshot.forEach(user => {
+                    userArray.push(user.id);
                 });
             })
-            .catch(err => {
-                console.log('Error getting documents', err);
+            .then(function () {
+                resolve(userArray);
             });
+    });
+};
 
-        contactsArray.push(contact);
-        console.log(i + ": contact :" + contact);
-    }
+getAllContacts = getAllUsers().then(function(res) {
+    contactArray = [];
 
-    console.log("Kontakte: " + contactsArray);
+    userArray.forEach(userID => {
 
-    res.status(200);
+        console.log("User ist " + userID);
+
+        contactCollection = db.collection(USERS).doc(userID).collection(CONTACTS);
+
+        return promise = new Promise(function(resolve, reject) {
+
+            contactCollection.get()
+                .then(snapshot => {
+                    snapshot.forEach(contact => {
+                        userArray[userID].push(contact);
+                        console.log("ContactArray: " + JSON.stringify(userArray));
+                    });
+                })
+                .then(function () {
+                    resolve(userArray);
+                });
+        });
+
+        }
+    )
+
 });
-
-
 
 
 
