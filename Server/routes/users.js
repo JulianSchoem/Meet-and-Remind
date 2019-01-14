@@ -281,7 +281,7 @@ getAllUsers = function() {
     });
 };
 
-getAllContacts = getAllUsers().then(function(res) {
+getAllUsers().then(function(res) {
     contactArray = [];
 
     userArray.forEach(userID => {
@@ -295,8 +295,12 @@ getAllContacts = getAllUsers().then(function(res) {
             contactCollection.get()
                 .then(snapshot => {
                     snapshot.forEach(contact => {
-                        userArray[userID].push(contact);
-                        console.log("ContactArray: " + JSON.stringify(userArray));
+                        userArray[userID] = [];
+
+
+
+                        console.log("Contact: " + contact.id);
+                        console.log("Gesamtes Array: " + userArray[userID][contact.id]);
                     });
                 })
                 .then(function () {
