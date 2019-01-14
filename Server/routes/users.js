@@ -267,7 +267,7 @@ getAllUsers = function() {
     userArray = [];
     usersCollection = db.collection(USERS);
 
-    return promise = new Promise(function(resolve, reject) {
+    return promise = new Promise(function(resolve) {
 
         usersCollection.get()
             .then(snapshot => {
@@ -280,42 +280,44 @@ getAllUsers = function() {
                 resolve(userArray);
             });
     });
-}.then(function(res) {
+};
 
-    userArray.forEach(user => {
+getLabels = function() {
+    getAllUsers().then(function(res) {
 
-        user.contacts = [];
+        userArray.forEach(user => {
 
-        contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
+            user.contacts = [];
 
-        return promise = new Promise(function(resolve, reject) {
+            contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
 
-            contactCollection.get()
-                .then(snapshot => {
-                    snapshot.forEach(contact => {
-                        let contactTmp = contact.id;
-                        user.contacts.push({ contactID : contactTmp});
+            return promise = new Promise(function(resolve) {
 
-                        console.log("Gesamtes Array: " + JSON.stringify(user));
+                contactCollection.get()
+                    .then(snapshot => {
+                        snapshot.forEach(contact => {
+                            let contactTmp = contact.id;
+                            user.contacts.push({ contactID : contactTmp});
+
+                        });
+                    })
+                    .then(function () {
+                        //console.log("TEST TEST TEST: " + JSON.stringify(user.contacts));
+                        resolve(user);
                     });
-                })
-                .then(function () {
-                    resolve(user);
-                });
-        });
+            });
 
-        }
-    )
+        })
 
-}).then(function () {
+    }).then(function (user) {
 
-    user.contacts.forEach(contact => {
+        user.contacts.forEach(contact => {
 
             user.contacts.reminder = [];
 
             reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).collection(REMINDER);
 
-            return promise = new Promise(function(resolve, reject) {
+            return promise = new Promise(function(resolve) {
 
                 reminderCollection.get()
                     .then(snapshot => {
@@ -323,8 +325,7 @@ getAllUsers = function() {
                             let reminderTmp = reminder.id.label;
                             user.contacts.reminder.push({ reminderLabel : reminderTmp});
 
-                            console.log("Reminder: " + user.contacts.reminder);
-                            console.log("Gesamtes Array: " + JSON.stringify(user));
+                            console.log("TEST TEST TEST: " + user.contacts.reminder);
                         });
                     })
                     .then(function () {
@@ -332,12 +333,12 @@ getAllUsers = function() {
                     });
             });
 
-        }
-    )
+        })
 
-});
+    });
+};
 
-
+getLabels();
 
 /************************************************************************
  * Helper Functions
