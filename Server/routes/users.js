@@ -277,7 +277,7 @@ getUser = async function() {
                 });
             })
             .then(function () {
-                console.log("Get User: " + JSON.stringify(userArray, null, 2));
+                //console.log("Get User: " + JSON.stringify(userArray, null, 2));
                 resolve(userArray);
             });
     });
@@ -298,7 +298,7 @@ getContactsFromFb = async function(user) {
                 });
             })
             .then(function () {
-                console.log("Get Contacts: " + JSON.stringify(user, null, 3));
+                //console.log("Get Contacts: " + JSON.stringify(user, null, 3));
                 resolve(user);
             });
     });
@@ -309,6 +309,8 @@ getContacts = async function(userArray) {
     for (let user of userArray) {
         await getContactsFromFb(user);
     }
+
+    return userArray;
 };
 
 getLabelsFromFb = async function(user) {
@@ -327,7 +329,7 @@ getLabelsFromFb = async function(user) {
                 });
             })
             .then(function () {
-                console.log("Get Labels: " + JSON.stringify(user, null, 5));
+                //console.log("Get Labels: " + JSON.stringify(user, null, 5));
                 resolve(user);
             });
     });
@@ -341,6 +343,8 @@ getLabels = async function(userArray) {
         await getLabelsFromFb(user);
     }
 
+    return userArray;
+
 };
 
 getMainTopic = async function() {
@@ -348,10 +352,10 @@ getMainTopic = async function() {
     let result = await getUser();
     console.log('--------------- ENDE getUser() ---------------');
 
-    let contacts = await getContacts(result);
+    let result1 = await getContacts(result);
     console.log('--------------- ENDE getContacts()---------------');
 
-    let labels = await getLabels(contacts);
+    let result2 = await getLabels(result1);
     console.log('--------------- ENDE getLabels()---------------');
 
     console.log('--------------- ENDE ---------------');
