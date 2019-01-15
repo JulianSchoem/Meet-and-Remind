@@ -298,7 +298,6 @@ getContactsFromFb = async function(user) {
                 });
             })
             .then(function () {
-                //console.log("Get Contacts: " + JSON.stringify(user, null, 3));
                 resolve(user);
             });
     });
@@ -325,9 +324,7 @@ getLabelsFromFb = async function(user, contact) {
                 snapshot.forEach(reminder => {
                     let reminderLabel = reminder.data().label;
 
-                    console.log("reminderTmp:  " + JSON.stringify(reminderLabel));
-
-
+                    contact.labels.push({ label : reminderLabel });
 
                 });
             })
@@ -358,16 +355,16 @@ getLabels = async function(userArray) {
 
 getMainTopic = async function() {
 
-    let result = await getUser();
+    let resultWithUsers = await getUser();
     console.log('--------------- ENDE getUser() ---------------');
 
-    let result1 = await getContacts(result);
+    let resultWithContacts = await getContacts(resultWithUsers);
     console.log('--------------- ENDE getContacts()---------------');
 
-    let result2 = await getLabels(result1);
+    let resultWithLabels = await getLabels(resultWithContacts);
     console.log('--------------- ENDE getLabels()---------------');
 
-    console.log("FINAL: " + JSON.stringify(result2, null, 5));
+    console.log("FINAL: " + JSON.stringify(resultWithLabels, null, 5));
     console.log('--------------- ENDE ---------------');
 };
 
