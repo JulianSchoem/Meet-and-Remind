@@ -314,8 +314,7 @@ getContacts = async function(userArray) {
 };
 
 getLabelsFromFb = async function(user, contact) {
-    console.log("user: " + JSON.stringify(user.userID, null, 2));
-    console.log("contact: " + JSON.stringify(contact.contactID, null, 2));
+    contact.labels = [];
 
     reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).collection(REMINDER);
 
@@ -323,14 +322,16 @@ getLabelsFromFb = async function(user, contact) {
 
         reminderCollection.get()
             .then(snapshot => {
-                snapshot.forEach(contact => {
-                    let contactTmp = contact.id;
-                    user.contacts.push({ contactID : contactTmp});
+                snapshot.forEach(reminder => {
+                    let reminderLabel = reminder.data().label;
+
+                    console.log("reminderTmp:  " + JSON.stringify(reminderLabel));
+
+
 
                 });
             })
             .then(function () {
-                //console.log("Get Contacts: " + JSON.stringify(user, null, 3));
                 resolve(user);
             });
     });
@@ -339,13 +340,11 @@ getLabelsFromFb = async function(user, contact) {
 
 getLabelsOfContact = async function(user) {
     // we cant use .forEach here because of asynchronous complications
-
     for (let contact of user.contacts) {
         await getLabelsFromFb(user, contact);
     }
 
-    return userArray;
-
+    return user;
 };
 
 getLabels = async function(userArray) {
@@ -355,7 +354,6 @@ getLabels = async function(userArray) {
     }
 
     return userArray;
-
 };
 
 getMainTopic = async function() {
@@ -369,6 +367,7 @@ getMainTopic = async function() {
     let result2 = await getLabels(result1);
     console.log('--------------- ENDE getLabels()---------------');
 
+    console.log("FINAL: " + JSON.stringify(result2, null, 5));
     console.log('--------------- ENDE ---------------');
 };
 
