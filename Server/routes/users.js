@@ -263,8 +263,8 @@ router.delete('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
  * Serverseitige Anwendungslogik
  ************************************************************************/
 
-getAllUsers = function() {
-    userArray = [];
+getUser = function() {
+    let userArray = [];
     usersCollection = db.collection(USERS);
 
     return promise = new Promise(function(resolve) {
@@ -277,70 +277,80 @@ getAllUsers = function() {
                 });
             })
             .then(function () {
+                console.log("Get User: " + JSON.stringify(userArray, null, 2));
                 resolve(userArray);
             });
     });
 };
 
-getLabels = function() {
-    getAllUsers().then(function(res) {
+getContactsFromFb = function(user) {
+    user.contacts = [];
+    contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
 
-        userArray.forEach(user => {
+    return promise = new Promise(function(resolve) {
 
-            user.contacts = [];
+        contactCollection.get()
+            .then(snapshot => {
+                snapshot.forEach(contact => {
+                    let contactTmp = contact.id;
+                    user.contacts.push({ contactID : contactTmp});
 
-            contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
-
-            return promise = new Promise(function(resolve) {
-
-                contactCollection.get()
-                    .then(snapshot => {
-                        snapshot.forEach(contact => {
-                            let contactTmp = contact.id;
-                            user.contacts.push({ contactID : contactTmp});
-
-                        });
-                    })
-                    .then(function () {
-                        //console.log("TEST TEST TEST: " + JSON.stringify(user.contacts));
-                        resolve(user);
-                    });
+                });
+            })
+            .then(function () {
+                console.log("Get Contacts: " + JSON.stringify(user, null, 3));
+                resolve(user);
             });
-
-        })
-
-    }).then(function (user) {
-
-        console.log("Reminder Part: " + JSON.stringify(user));
-
-        user.contacts.forEach(contact => {
-
-            user.contacts.reminder = [];
-
-            reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).collection(REMINDER);
-
-            return promise = new Promise(function(resolve) {
-
-                reminderCollection.get()
-                    .then(snapshot => {
-                        snapshot.forEach(reminder => {
-                            let reminderTmp = reminder.id.label;
-                            user.contacts.reminder.push({ reminderLabel : reminderTmp});
-
-                            console.log("TEST TEST TEST: " + user.contacts.reminder);
-                        });
-                    })
-                    .then(function () {
-                        resolve(user);
-                    });
-            });
-
-        })
-
     });
 };
 
-getLabels();
+getContacts = function(userArray) {
+    userArray.forEach(async user => {
+        await getContactsFromFb(user);
+    });
+};
+
+getLabelsFromFb = function(user) {
+    user.contacts.reminder = [];
+
+    reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc();
+
+    return promise = new Promise(function(resolve) {
+
+        contactCollection.get()
+            .then(snapshot => {
+                snapshot.forEach(contact => {
+                    let contactTmp = contact.id;
+                    user.contacts.push({ contactID : contactTmp});
+
+                });
+            })
+            .then(function () {
+                console.log("Get Labels: " + JSON.stringify(user, null, 5));
+                resolve(user);
+            });
+    });
+};
+
+getLabels = function(userArray) {
+
+    console.log("Label Function: " + JSON.stringify(userArray, null, 2));
+
+    userArray.forEach(async user => {
+        await getContactsFromFb(user);
+    });
+};
+
+getMainTopic = async function() {
+
+    let result = await getUser();
+    let contacts = await getContacts(result);
+    let labels = await getLabels(contacts);
+
+    console.log('--------------- ENDE ---------------');
+};
+
+getMainTopic();
 
 /************************************************************************
  * Helper Functions
