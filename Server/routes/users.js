@@ -313,14 +313,15 @@ getContacts = async function(userArray) {
     return userArray;
 };
 
-getLabelsFromFb = async function(user) {
-    user.contacts.reminder = [];
+getLabelsFromFb = async function(user, contact) {
+    console.log("user: " + JSON.stringify(user.userID, null, 2));
+    console.log("contact: " + JSON.stringify(contact.contactID, null, 2));
 
-    reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc();
+    reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).collection(REMINDER);
 
     return new Promise(function(resolve) {
 
-        contactCollection.get()
+        reminderCollection.get()
             .then(snapshot => {
                 snapshot.forEach(contact => {
                     let contactTmp = contact.id;
@@ -329,18 +330,28 @@ getLabelsFromFb = async function(user) {
                 });
             })
             .then(function () {
-                //console.log("Get Labels: " + JSON.stringify(user, null, 5));
+                //console.log("Get Contacts: " + JSON.stringify(user, null, 3));
                 resolve(user);
             });
     });
+
+};
+
+getLabelsOfContact = async function(user) {
+    // we cant use .forEach here because of asynchronous complications
+
+    for (let contact of user.contacts) {
+        await getLabelsFromFb(user, contact);
+    }
+
+    return userArray;
+
 };
 
 getLabels = async function(userArray) {
-
-    console.log("Label Function: " + JSON.stringify(userArray, null, 2));
     // we cant use .forEach here because of asynchronous complications
     for (let user of userArray) {
-        await getLabelsFromFb(user);
+        await getLabelsOfContact(user);
     }
 
     return userArray;
