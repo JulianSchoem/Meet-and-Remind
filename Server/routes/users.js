@@ -344,7 +344,7 @@ getLabelsFromFb = async function(user, contact) {
                 snapshot.forEach(reminder => {
                     let reminderLabel = reminder.data().label;
 
-                    contact.labels.push({ label : reminderLabel });
+                    contact.labels.push(reminderLabel);
 
                 });
             })
