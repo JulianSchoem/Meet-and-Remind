@@ -409,34 +409,37 @@ getLabelCount = async function(labelInfo) {
 
     // iterate the generated JSON to get the most frequent label
     for (let user of labelInfo) {
-        // speichere die UserID ab
+        // safe user ID
         let userID = user.userID;
 
         for (let contact of user.contacts) {
-            // speichere die ContactID ab
+            // safe contact ID
             let contactID = contact.contactID;
 
             for (let label of contact.labels) {
-                let counts = {}; //We are going to count occurrence of item here
-                let compare = 0;  //We are going to compare using stored value
+                // count occurrence of labels here
+                let counts = {};
+                // compare stored value
+                let compare = 0;
+                // set main topic in the end
                 let mainTopic;
 
                 let labelCount = label;
 
-                //if count[labelCount] doesn't exist
+                // if count[labelCount] doesn't exist
                 if (counts[labelCount] === undefined) {
-                    //set count[labelCount] value to 1
+                    // set count[labelCount] value to 1
                     counts[labelCount] = 1;
                 } else {
-                    //increment existing value
+                    // increment existing value
                     counts[labelCount] = counts[labelCount] + 1;
                 }
 
-                //counts[labelCount] > 0
+                // counts[labelCount] > 0
                 if (counts[labelCount] > compare) {
-                    //set compare to counts[word]
+                    // set compare to counts[word]
                     compare = counts[labelCount];
-                    //set mostFrequent value
+                    // set most frequent value
                     mainTopic = label;
                 }
 
