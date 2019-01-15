@@ -304,10 +304,11 @@ getContactsFromFb = async function(user) {
     });
 };
 
-getContacts = function(userArray) {
-    userArray.forEach(async user => {
+getContacts = async function(userArray) {
+    // we cant use .forEach here because of asynchronous complications
+    for (let user of userArray) {
         await getContactsFromFb(user);
-    });
+    }
 };
 
 getLabelsFromFb = async function(user) {
@@ -332,13 +333,14 @@ getLabelsFromFb = async function(user) {
     });
 };
 
-getLabels = function(userArray) {
+getLabels = async function(userArray) {
 
     console.log("Label Function: " + JSON.stringify(userArray, null, 2));
+    // we cant use .forEach here because of asynchronous complications
+    for (let user of userArray) {
+        await getLabelsFromFb(user);
+    }
 
-    userArray.forEach(async user => {
-        await getContactsFromFb(user);
-    });
 };
 
 getMainTopic = async function() {
@@ -346,10 +348,10 @@ getMainTopic = async function() {
     let result = await getUser();
     console.log('--------------- ENDE getUser() ---------------');
 
-    let contacts = getContacts(result);
+    let contacts = await getContacts(result);
     console.log('--------------- ENDE getContacts()---------------');
 
-    let labels = getLabels(contacts);
+    let labels = await getLabels(contacts);
     console.log('--------------- ENDE getLabels()---------------');
 
     console.log('--------------- ENDE ---------------');
