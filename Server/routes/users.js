@@ -354,6 +354,7 @@ getLabelsFromFb = async function(user, contact) {
     });
 
 };
+
 /**
  * iterate all reminder
  * @param user
@@ -409,11 +410,11 @@ getLabelCount = async function(labelInfo) {
 
     // iterate the generated JSON to get the most frequent label
     for (let user of labelInfo) {
-        // safe user ID
+        // safe user ID to set the main topic into firebase later
         let userID = user.userID;
 
         for (let contact of user.contacts) {
-            // safe contact ID
+            // safe contact ID to set the main topic into firebase later
             let contactID = contact.contactID;
 
             for (let label of contact.labels) {
@@ -437,7 +438,7 @@ getLabelCount = async function(labelInfo) {
 
                 // counts[labelCount] > 0
                 if (counts[labelCount] > compare) {
-                    // set compare to counts[word]
+                    // set compare to counts[labelCount]
                     compare = counts[labelCount];
                     // set most frequent value
                     mainTopic = label;
@@ -445,11 +446,9 @@ getLabelCount = async function(labelInfo) {
 
                 //await console.log(userID + " with contact " + contactID + " has " + mainTopic);
 
-                /**
-                 * Set the main topic into the contact on Firebase
-                 */
+                //Set the main topic into the contact on Firebase
                 if (mainTopic) {
-                    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({topic : mainTopic});
+                    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({topic : mainTopic}, {merge: true});
                 }
             }
 
@@ -457,9 +456,10 @@ getLabelCount = async function(labelInfo) {
     }
 
 };
-
-
-
+/**
+ * Set the main topic into firebase
+ * @returns {Promise<void>}
+ */
 setMainTopic = async function() {
     /**
      * Get all labels of reminders that users set to their contacts
@@ -474,17 +474,10 @@ setMainTopic = async function() {
 
 };
 
-
+/**
+ * Run the Serverseitige Anwendungslogik
+ */
 setMainTopic();
-
-
-
-
-
-
-
-
-
 
 
 /************************************************************************
