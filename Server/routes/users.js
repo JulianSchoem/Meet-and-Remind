@@ -263,11 +263,11 @@ router.delete('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
  * Serverseitige Anwendungslogik
  ************************************************************************/
 
-getUser = function() {
+getUser = async function() {
     let userArray = [];
     usersCollection = db.collection(USERS);
 
-    return promise = new Promise(function(resolve) {
+    return new Promise(function(resolve) {
 
         usersCollection.get()
             .then(snapshot => {
@@ -283,11 +283,11 @@ getUser = function() {
     });
 };
 
-getContactsFromFb = function(user) {
+getContactsFromFb = async function(user) {
     user.contacts = [];
     contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
 
-    return promise = new Promise(function(resolve) {
+    return new Promise(function(resolve) {
 
         contactCollection.get()
             .then(snapshot => {
@@ -310,12 +310,12 @@ getContacts = function(userArray) {
     });
 };
 
-getLabelsFromFb = function(user) {
+getLabelsFromFb = async function(user) {
     user.contacts.reminder = [];
 
     reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc();
 
-    return promise = new Promise(function(resolve) {
+    return new Promise(function(resolve) {
 
         contactCollection.get()
             .then(snapshot => {
@@ -344,13 +344,28 @@ getLabels = function(userArray) {
 getMainTopic = async function() {
 
     let result = await getUser();
-    let contacts = await getContacts(result);
-    let labels = await getLabels(contacts);
+    console.log('--------------- ENDE getUser() ---------------');
+
+    let contacts = getContacts(result);
+    console.log('--------------- ENDE getContacts()---------------');
+
+    let labels = getLabels(contacts);
+    console.log('--------------- ENDE getLabels()---------------');
 
     console.log('--------------- ENDE ---------------');
 };
 
 getMainTopic();
+
+
+
+
+
+
+
+
+
+
 
 /************************************************************************
  * Helper Functions
