@@ -46,20 +46,8 @@ import java.util.UUID;
 public class AddContact extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final String LOGTAG = "AddContact";
-    private static final int NOTIFICATION_ID = 1;
-    private static final String NOTIFICATION_CHANNEL_ID = "my_notification_channel";
 
 
-    private static final String APP_NAME = "Meet And Remind";
-
-    private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
-
-    static final int STATE_LISTENING = 1;
-    static final int STATE_CONNECTING = 2;
-    static final int STATE_CONNECTED = 3;
-    static final int STATE_CONNECTION_FAILED = 4;
-    static final int STATE_MESSAGE_RECEIVED = 5;
 
     static final int REQUEST_ENABLE_BLUETOOTH = 1;
 
@@ -245,10 +233,11 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
         listview_bondedDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /**BluetoothDevice device = pairedDevicesList.get(position);
+                BluetoothDevice device = pairedDevicesList.get(position);
                 ClientClass clientClass = new ClientClass(device);
-                clientClass.start();**/
+                clientClass.start();
 
+                /**
                 ClientClass arrayClients[] = new ClientClass[pairedDevicesList.size()];
                 for ( int i = 0; i<pairedDevicesList.size(); i++){
                     BluetoothDevice device = pairedDevicesList.get(i);
@@ -257,48 +246,13 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
                 for ( ClientClass each : arrayClients){
                     //TODO starten, warten... wenn Connection Failed, dann Schleife von oben neu beginnen...
                     each.start();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (handler.obtainMessage().equals("Connected")){
-                        status.setText("WOW");
-                        break;
-                    }
-                    status.setText("Connecting...");
-                }
+                }**/
 
             }
         });
 
     }
 
-    public void sendNotification(){
-        NotificationManager nm = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        Intent resultIntent = new Intent(getApplicationContext(), ReminderDetail.class);
-        // TODO which Reminder Detail? putExtra()/Parameter..!
-        resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel nChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-
-            //Configure
-            nChannel.enableLights(true);
-            nChannel.setLightColor(Color.CYAN);
-            nm.createNotificationChannel(nChannel);
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setSmallIcon(R.drawable.logo_meet_remind)
-                .setContentTitle("Titel der Erinnerung")
-                .setContentText("Beschreibung der Erinnerung")
-                .setContentIntent(resultPendingIntent);
-
-        nm.notify(NOTIFICATION_ID, builder.build());
-    }
 
     public void bluetoothEnableDisable() {
         if(mybluetoothAdapter == null) {
@@ -335,120 +289,7 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
 
     }
 
-    Handler handler = new Handler(new Handler.Callback(){
 
-        @Override
-        public boolean handleMessage(Message msg) {
-
-            switch(msg.what){
-                case STATE_LISTENING:
-                    status.setText("Listening");
-                    break;
-                case STATE_CONNECTING:
-                    status.setText("Connecting");
-                    break;
-                case STATE_CONNECTED:
-                    status.setText("Connected");
-                    break;
-                case STATE_CONNECTION_FAILED:
-                    status.setText("Connection Failed");
-                    break;
-                case STATE_MESSAGE_RECEIVED:
-                    status.setText("Received");
-                    break;
-            }
-            return false;
-        }
-    });
-
-    private class ServerClass extends Thread{
-
-        private BluetoothServerSocket serverSocket;
-
-        public ServerClass() {
-
-            try {
-                serverSocket = mybluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(APP_NAME, MY_UUID_INSECURE);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void run(){
-
-            BluetoothSocket socket = null;
-
-            while(socket == null){
-
-                try {
-                    Message message = Message.obtain();
-                    message.what = STATE_CONNECTING;
-                    handler.sendMessage(message);
-
-                    socket = serverSocket.accept();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Message message = Message.obtain();
-                    message.what = STATE_CONNECTION_FAILED;
-                    handler.sendMessage(message);
-                }
-
-                if (socket != null){
-                    Message message = Message.obtain();
-                    message.what = STATE_CONNECTED;
-                    handler.sendMessage(message);
-
-                    //send receive
-
-                    break;
-
-                }
-            }
-
-
-        }
-
-
-    }
-
-    private class ClientClass extends Thread{
-
-        private BluetoothDevice device;
-        private BluetoothSocket socket;
-
-        public ClientClass(BluetoothDevice device) {
-            this.device = device;
-            try {
-                socket = device.createRfcommSocketToServiceRecord(MY_UUID_INSECURE);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void run() {
-
-            try {
-                socket.connect();
-
-                Message message = Message.obtain();
-                message.what = STATE_CONNECTED;
-                handler.sendMessage(message);
-               //TODO Configure Push Notification
-                sendNotification();
-                //device.getName() getReminder...
-
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-                Message message = Message.obtain();
-                message.what = STATE_CONNECTION_FAILED;
-                handler.sendMessage(message);
-            }
-
-        }
-
-
-    }
 
 
 
