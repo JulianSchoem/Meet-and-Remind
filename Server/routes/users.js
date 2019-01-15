@@ -265,7 +265,7 @@ router.delete('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
 
 /**
  * get all users and push them into JSON
- * @returns {Promise<*>}
+ * @returns {Promise<*>} added await for waiting for the promise
  */
 getUser = async function() {
     let userArray = [];
@@ -290,7 +290,7 @@ getUser = async function() {
 /**
  * get all contacts from Firebase and push them to the user
  * @param user
- * @returns {Promise<*>}
+ * @returns {Promise<*>} added await for waiting for the promise
  */
 getContactsFromFb = async function(user) {
     user.contacts = [];
@@ -315,7 +315,7 @@ getContactsFromFb = async function(user) {
 /**
  * iterate all contacts
  * @param userArray
- * @returns {Promise<*>}
+ * @returns {Promise<*>} added await for waiting for the promise
  */
 getContacts = async function(userArray) {
     // we cant use .forEach here because of asynchronous complications
@@ -330,7 +330,7 @@ getContacts = async function(userArray) {
  * get all labels from Firebase and push them to one contact of a user
  * @param user
  * @param contact
- * @returns {Promise<*>}
+ * @returns {Promise<*>} added await for waiting for the promise
  */
 getLabelsFromFb = async function(user, contact) {
     contact.labels = [];
@@ -357,7 +357,7 @@ getLabelsFromFb = async function(user, contact) {
 /**
  * iterate all reminder
  * @param user
- * @returns {Promise<*>}
+ * @returns {Promise<*>} added await for waiting for the promise
  */
 getLabelsOfContact = async function(user) {
     // we cant use .forEach here because of asynchronous complications
@@ -371,7 +371,7 @@ getLabelsOfContact = async function(user) {
 /**
  * iterate all user
  * @param userArray
- * @returns {Promise<*>}
+ * @returns {Promise<*>} added await for waiting for the promise
  */
 getLabels = async function(userArray) {
     // we cant use .forEach here because of asynchronous complications
@@ -386,22 +386,93 @@ getLabels = async function(userArray) {
  * Main function to collect all labels of users contacts to get a final JSON with the labels
  * @returns {Promise<void>}
  */
-getMainTopic = async function() {
+getAllLabelsInFB = async function() {
 
+    /**
+     * get all users and push them into JSON
+     */
     let resultWithUsers = await getUser();
-    console.log('--------------- ENDE getUser() ---------------');
-
+    /**
+     * get all contacts from Firebase and push them to the user
+     */
     let resultWithContacts = await getContacts(resultWithUsers);
-    console.log('--------------- ENDE getContacts()---------------');
 
+    /**
+     * get all labels from Firebase and push them to one contact of a user
+     */
     let resultWithLabels = await getLabels(resultWithContacts);
-    console.log('--------------- ENDE getLabels()---------------');
 
-    console.log("FINAL: " + JSON.stringify(resultWithLabels, null, 5));
-    console.log('--------------- ENDE ---------------');
+    return resultWithLabels;
 };
 
-getMainTopic();
+getLabelCount = async function(labelInfo) {
+
+    // iterate the generated JSON to get the most frequent label
+    for (let user of labelInfo) {
+        // speichere die UserID ab
+        let userID = user.userID;
+
+        for (let contact of user.contacts) {
+            // speichere die ContactID ab
+            let contactID = contact.contactID;
+
+            for (let label of contact.labels) {
+                let counts = {}; //We are going to count occurrence of item here
+                let compare = 0;  //We are going to compare using stored value
+                let mainTopic;
+
+                let labelCount = label;
+
+                //if count[labelCount] doesn't exist
+                if (counts[labelCount] === undefined) {
+                    //set count[labelCount] value to 1
+                    counts[labelCount] = 1;
+                } else {
+                    //increment existing value
+                    counts[labelCount] = counts[labelCount] + 1;
+                }
+
+                //counts[labelCount] > 0
+                if (counts[labelCount] > compare) {
+                    //set compare to counts[word]
+                    compare = counts[labelCount];
+                    //set mostFrequent value
+                    mainTopic = label;
+                }
+
+                //await console.log(userID + " with contact " + contactID + " has " + mainTopic);
+
+                /**
+                 * Set the main topic into the contact on Firebase
+                 */
+                if (mainTopic) {
+                    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({topic : mainTopic});
+                }
+            }
+
+        }
+    }
+
+};
+
+
+
+setMainTopic = async function() {
+    /**
+     * Get all labels of reminders that users set to their contacts
+     */
+    let labelInfo = await getAllLabelsInFB();
+
+    console.log(JSON.stringify(labelInfo, null, 5));
+    /**
+     * Count which label is the most used
+     */
+    await getLabelCount(labelInfo);
+
+};
+
+
+setMainTopic();
 
 
 
