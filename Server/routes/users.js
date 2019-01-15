@@ -263,55 +263,118 @@ router.delete('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
  * Serverseitige Anwendungslogik
  ************************************************************************/
 
-getAllUsers = function() {
-    userArray = [];
+getUser = async function() {
+    let userArray = [];
     usersCollection = db.collection(USERS);
 
-    return promise = new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
 
         usersCollection.get()
             .then(snapshot => {
                 snapshot.forEach(user => {
-                    userArray.push(user.id);
+                    let userTmp = user.id;
+                    userArray.push({ userID : userTmp });
                 });
             })
             .then(function () {
+                //console.log("Get User: " + JSON.stringify(userArray, null, 2));
                 resolve(userArray);
             });
     });
 };
 
-getAllUsers().then(function(res) {
-    contactArray = [];
+getContactsFromFb = async function(user) {
+    user.contacts = [];
+    contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
 
-    userArray.forEach(userID => {
+    return new Promise(function(resolve) {
 
-        console.log("User ist " + userID);
+        contactCollection.get()
+            .then(snapshot => {
+                snapshot.forEach(contact => {
+                    let contactTmp = contact.id;
+                    user.contacts.push({ contactID : contactTmp});
 
-        contactCollection = db.collection(USERS).doc(userID).collection(CONTACTS);
-
-        return promise = new Promise(function(resolve, reject) {
-
-            contactCollection.get()
-                .then(snapshot => {
-                    snapshot.forEach(contact => {
-                        userArray[userID] = [];
-
-
-
-                        console.log("Contact: " + contact.id);
-                        console.log("Gesamtes Array: " + userArray[userID][contact.id]);
-                    });
-                })
-                .then(function () {
-                    resolve(userArray);
                 });
-        });
+            })
+            .then(function () {
+                resolve(user);
+            });
+    });
+};
 
-        }
-    )
+getContacts = async function(userArray) {
+    // we cant use .forEach here because of asynchronous complications
+    for (let user of userArray) {
+        await getContactsFromFb(user);
+    }
 
-});
+    return userArray;
+};
+
+getLabelsFromFb = async function(user, contact) {
+    contact.labels = [];
+
+    reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).collection(REMINDER);
+
+    return new Promise(function(resolve) {
+
+        reminderCollection.get()
+            .then(snapshot => {
+                snapshot.forEach(reminder => {
+                    let reminderLabel = reminder.data().label;
+
+                    contact.labels.push({ label : reminderLabel });
+
+                });
+            })
+            .then(function () {
+                resolve(user);
+            });
+    });
+
+};
+
+getLabelsOfContact = async function(user) {
+    // we cant use .forEach here because of asynchronous complications
+    for (let contact of user.contacts) {
+        await getLabelsFromFb(user, contact);
+    }
+
+    return user;
+};
+
+getLabels = async function(userArray) {
+    // we cant use .forEach here because of asynchronous complications
+    for (let user of userArray) {
+        await getLabelsOfContact(user);
+    }
+
+    return userArray;
+};
+
+getMainTopic = async function() {
+
+    let resultWithUsers = await getUser();
+    console.log('--------------- ENDE getUser() ---------------');
+
+    let resultWithContacts = await getContacts(resultWithUsers);
+    console.log('--------------- ENDE getContacts()---------------');
+
+    let resultWithLabels = await getLabels(resultWithContacts);
+    console.log('--------------- ENDE getLabels()---------------');
+
+    console.log("FINAL: " + JSON.stringify(resultWithLabels, null, 5));
+    console.log('--------------- ENDE ---------------');
+};
+
+getMainTopic();
+
+
+
+
+
+
 
 
 
