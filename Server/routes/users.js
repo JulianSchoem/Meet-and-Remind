@@ -263,6 +263,10 @@ router.delete('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
  * Serverseitige Anwendungslogik
  ************************************************************************/
 
+/**
+ * get all users and push them into JSON
+ * @returns {Promise<*>}
+ */
 getUser = async function() {
     let userArray = [];
     usersCollection = db.collection(USERS);
@@ -283,6 +287,11 @@ getUser = async function() {
     });
 };
 
+/**
+ * get all contacts from Firebase and push them to the user
+ * @param user
+ * @returns {Promise<*>}
+ */
 getContactsFromFb = async function(user) {
     user.contacts = [];
     contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
@@ -303,6 +312,11 @@ getContactsFromFb = async function(user) {
     });
 };
 
+/**
+ * iterate all contacts
+ * @param userArray
+ * @returns {Promise<*>}
+ */
 getContacts = async function(userArray) {
     // we cant use .forEach here because of asynchronous complications
     for (let user of userArray) {
@@ -312,6 +326,12 @@ getContacts = async function(userArray) {
     return userArray;
 };
 
+/**
+ * get all labels from Firebase and push them to one contact of a user
+ * @param user
+ * @param contact
+ * @returns {Promise<*>}
+ */
 getLabelsFromFb = async function(user, contact) {
     contact.labels = [];
 
@@ -334,7 +354,11 @@ getLabelsFromFb = async function(user, contact) {
     });
 
 };
-
+/**
+ * iterate all reminder
+ * @param user
+ * @returns {Promise<*>}
+ */
 getLabelsOfContact = async function(user) {
     // we cant use .forEach here because of asynchronous complications
     for (let contact of user.contacts) {
@@ -344,6 +368,11 @@ getLabelsOfContact = async function(user) {
     return user;
 };
 
+/**
+ * iterate all user
+ * @param userArray
+ * @returns {Promise<*>}
+ */
 getLabels = async function(userArray) {
     // we cant use .forEach here because of asynchronous complications
     for (let user of userArray) {
@@ -353,6 +382,10 @@ getLabels = async function(userArray) {
     return userArray;
 };
 
+/**
+ * Main function to collect all labels of users contacts to get a final JSON with the labels
+ * @returns {Promise<void>}
+ */
 getMainTopic = async function() {
 
     let resultWithUsers = await getUser();
