@@ -2,10 +2,18 @@ package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
 import android.annotation.SuppressLint;
 import android.app.IntentService;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -78,10 +86,36 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
     public class Message {
 
+        private static final int NOTIFICATION_ID = 1;
+        private static final String NOTIFICATION_CHANNEL_ID = "my_notification_channel";
+
         public void displayMessage(int resultCode, Bundle resultData) {
 
             String message = resultData.getString("message");
-            Toast.makeText(ContactList.this, resultCode + " " + message, Toast.LENGTH_SHORT).show();
+
+            NotificationManager nm = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            Intent resultIntent = new Intent(getApplicationContext(), ReminderDetail.class);
+            // TODO which Reminder Detail? putExtra()/Parameter..!
+            resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            PendingIntent resultPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                NotificationChannel nChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+
+                //Configure
+                nChannel.enableLights(true);
+                nChannel.setLightColor(Color.CYAN);
+                nm.createNotificationChannel(nChannel);
+            }
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setSmallIcon(R.drawable.logo_meet_remind)
+                    .setContentTitle(""+resultCode)
+                    .setContentText(""+message)
+                    .setContentIntent(resultPendingIntent);
+
+            nm.notify(NOTIFICATION_ID, builder.build());
         }
     }
 
