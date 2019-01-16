@@ -28,6 +28,9 @@ const settings = {
 const usersRoute = require('./routes/users');
 const topicsRoute = require('./routes/topics');
 
+// Init Serverseitige Anwendungslogik
+const anwendungslogik = require('./anwendungslogik');
+
 /*********************************************************************************************************
  * Server Methodes
  *********************************************************************************************************/
@@ -51,6 +54,25 @@ function initServer() {
     app.listen(settings.port, function(){
         console.log("Dienstgeber ist nun auf Port " + settings.port + " verfügbar");
     });
+
+
+    /**
+     * Cronjob for the Serverseitige Anwendungslogik
+     * Run it every minute (just for debugging and presentation of the Anwendungslogik)
+     */
+    /*
+    schedule.scheduleJob("* /1 * * * *", function() {
+        // main function for Serverseitige Anwendungslogik
+        anwendungslogik.setMainTopic();
+        console.log("------------------ FINISHED CRONJOB");
+    });
+    */
+
+    /**
+     * WITHOUT Cronjob for the Serverseitige Anwendungslogik
+     * Because of frequence that would be scheduled on Heroku
+     */
+    anwendungslogik.setMainTopic();
 
 }
 
