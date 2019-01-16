@@ -17,6 +17,9 @@ const USERS = "users";
 const CONTACTS = "contacts";
 const REMINDER = "reminder";
 
+// Init cron-job module
+const schedule = require('node-schedule');
+
 /************************************************************************
  * REST Methodes
  ************************************************************************/
@@ -443,6 +446,8 @@ iterateLabels = function(contact) {
 
 /**
  * get the user of the contact that needs to be analysed by its labels
+ * @param labelInfo
+ * @param userID
  */
 getUserByID = function(labelInfo, userID) {
     for (let user of labelInfo) {
@@ -525,16 +530,19 @@ setMainTopic = async function() {
     // count which label is the most used and set it to Firebase
     await getLabelCount(labelInfo);
 
-    console.log("------------------ ENDE ------------------");
+    console.log("------------------ FINISHED SERVERSEITIGE ANWENDUNGSLOGIK");
 };
 
 /**
- * Run the Serverseitige Anwendungslogik
+ * Cronjob for the Serverseitige Anwendungslogik
+ * Run it every minute (just for debugging and presentation of the Anwendungslogik)
  */
+schedule.scheduleJob("* /1 * * * *", function() {
+    // main function for Serverseitige Anwendungslogik
+    setMainTopic();
+    console.log("------------------ FINISHED CRONJOB");
+});
 
-
-// TODO set timer / cronjob / schedule
-setMainTopic();
 
 
 /************************************************************************
