@@ -406,55 +406,99 @@ getAllLabelsInFB = async function() {
     return resultWithLabels;
 };
 
-getLabelCount = async function(labelInfo) {
+// TODO: die functionen mit await mit try catch umschließen
+// TODO: beim ersten durchlaufen user -> contact ein flag(field) bei beiden setzen, dass sie bereits gehandled wurden
 
-    // iterate the generated JSON to get the most frequent label
-    for (let user of labelInfo) {
-        // safe user ID to set the main topic into firebase later
-        let userID = user.userID;
+iterateLabels = function(contact) {
 
-        for (let contact of user.contacts) {
-            // safe contact ID to set the main topic into firebase later
-            let contactID = contact.contactID;
+    // compare stored value
+    let compare = 0;
 
-            for (let label of contact.labels) {
-                // count occurrence of labels here
-                let counts = {};
-                // compare stored value
-                let compare = 0;
-                // set main topic in the end
-                let mainTopic;
+    for (let label of contact.labels) {
 
-                let labelCount = label;
+        // count occurrence of labels here
+        let counts = {};
 
-                // if count[labelCount] doesn't exist
-                if (counts[labelCount] === undefined) {
-                    // set count[labelCount] value to 1
-                    counts[labelCount] = 1;
-                } else {
-                    // increment existing value
-                    counts[labelCount] = counts[labelCount] + 1;
-                }
 
-                // counts[labelCount] > 0
-                if (counts[labelCount] > compare) {
-                    // set compare to counts[labelCount]
-                    compare = counts[labelCount];
-                    // set most frequent value
-                    mainTopic = label;
-                }
+        // if count[labelCount] doesn't exist
+        if (counts[label] === undefined) {
+            // set count[labelCount] value to 1
+            counts[label] = 1;
+        } else {
+            // increment existing value
+            counts[label] = counts[label] + 1;
+        }
 
-                //await console.log(userID + " with contact " + contactID + " has " + mainTopic);
-
-                //Set the main topic into the contact on Firebase
-                if (mainTopic) {
-                    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({topic : mainTopic}, {merge: true});
-                }
-            }
-
+        // counts[labelCount] > 0
+        if (counts[label] > compare) {
+            // set compare to counts[labelCount]
+            compare = counts[label];
+            // set most frequent value
+            mainTopic = label;
         }
     }
 
+    // TODO Maintopic : mainTopic usw
+    return {mainTopic, compare};
+};
+
+/**
+ * Match the user with his contact
+ */
+
+getUserByID = function(labelInfo, userID) {
+    for (let user of labelInfo) {
+        if (user.userID === userID) {
+            return user;
+        }
+    }
+};
+
+getContactByID = function(contactUser, userID) {
+    for (let neededUser of contactUser.contacts) {
+        if ( neededUser.contactID === userID) {
+            return neededUser;
+        }
+    }
+};
+
+iterateContacts = async function(user, labelInfo) {
+
+    for (let contact of user.contacts) {
+
+        let mainTopicUser = iterateLabels(contact);
+
+        // den gegenüber finden
+        let contactUser = getUserByID(labelInfo, contact.contactID);
+
+        let contactLabels = getContactByID(contactUser, user.userID);
+
+        let mainTopicContact = iterateLabels(contactLabels);
+
+        if (mainTopicUser.compare > mainTopicContact.compare) {
+            mainTopic = mainTopicUser.mainTopic;
+        } else {
+            mainTopic = mainTopicContact.mainTopic;
+
+        }
+
+        /**
+         * wenn gleiche anzahl dann nimmt er das erste
+         */
+
+        //Set the main topic into the contact on Firebase
+        if (mainTopic) {
+            await db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).set({topic : mainTopic}, {merge: true});
+            await db.collection(USERS).doc(contact.contactID).collection(CONTACTS).doc(user.userID).set({topic : mainTopic}, {merge: true});
+        }
+    }
+};
+
+getLabelCount = async function(labelInfo) {
+    // iterate the generated JSON to get the most frequent label
+    for (let user of labelInfo) {
+        await iterateContacts(user, labelInfo);
+    }
 };
 /**
  * Set the main topic into firebase
@@ -466,12 +510,12 @@ setMainTopic = async function() {
      */
     let labelInfo = await getAllLabelsInFB();
 
-    console.log(JSON.stringify(labelInfo, null, 5));
     /**
      * Count which label is the most used
      */
     await getLabelCount(labelInfo);
 
+    console.log("------------------ ENDE ------------------------");
 };
 
 /**
