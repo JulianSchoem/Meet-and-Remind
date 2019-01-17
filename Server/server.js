@@ -55,7 +55,9 @@ function initServer() {
     app.get('/', function (req, res) {
         res.send('<h1>Entwicklungsprojekt interaktive Systeme</h1>\n' +
             '<h2>Wintersemester 2018/2019 an der TH Köln</h2>\n' +
-            '<h3>Meet & Remind - Johanna Mayer und Julian Schoemaker</h3>'
+            '<h3>Meet & Remind - Johanna Mayer und Julian Schoemaker</h3>' +
+            '<a href="/users">List of users in Meet & Remind</a><br>' +
+            '<a href="/topics">List of Topics that are available for reminders in Meet & Remind</a>'
         );
     });
 
