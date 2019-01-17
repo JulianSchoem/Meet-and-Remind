@@ -158,11 +158,7 @@ class ServerClass extends Thread{
 
             }
         }
-
-
     }
-
-
 }
 
 class ClientClass extends Thread{

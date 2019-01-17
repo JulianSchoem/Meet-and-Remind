@@ -22,7 +22,21 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.Iterator;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class ContactList extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -51,8 +65,71 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
         listview_contactList = (ListView) findViewById(R.id.listview_contactlist);
 
-        listview_contactList.setAdapter(new AdapterContactList(this, new String[]{"Michael",
-                "Ralf", "Mareike", "Petra"}));
+        OkHttpClient client = new OkHttpClient();
+
+        String url = "https://eisws1819mayerschoemaker.herokuapp.com/users/0C:8F:FF:C7:92:2C/contacts";
+        final String array[] = new String[1];
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if ( response.isSuccessful())
+                    {
+                        final String jsonData = response.body().string();
+                        JSONObject jObject = null;
+                        try {
+                            jObject = new JSONObject(jsonData);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        //get length of list
+                        Iterator<String> count = jObject.keys();
+                        int counter = 0;
+                        while(count.hasNext()) {
+                            String key = count.next();
+                            try {
+                                if (jObject.get(key) instanceof JSONObject) {
+                                    counter++;
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        final String array[] = new String[counter];
+
+                        try {
+                            Iterator<String> keys = jObject.keys();
+                            int i = 0;
+
+                            while(keys.hasNext()) {
+                                String key = keys.next();
+                                if (jObject.get(key) instanceof JSONObject) {
+                                        array[i] = key;
+                                }
+                                i++;
+                            }
+                        } catch (Exception e){
+
+                        }
+
+                        ContactList.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                listview_contactList.setAdapter(new AdapterContactList(getApplicationContext(), array));
+                            }
+                        });
+                }
+            }
+        });
 
 
         listview_contactList.setOnItemClickListener(ContactList.this);

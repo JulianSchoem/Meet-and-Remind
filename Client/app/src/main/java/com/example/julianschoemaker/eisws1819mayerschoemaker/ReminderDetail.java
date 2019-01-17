@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -114,31 +115,33 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
                         e.printStackTrace();
                     }
 
-                    final String array[] = new String[21];
+                    //get length of list
+                    Iterator<String> count = jObject.keys();
+                    int counter = 0;
+                    while(count.hasNext()) {
+                        String key = count.next();
+                        try {
+                            if (jObject.get(key) instanceof JSONObject) {
+                                counter++;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    final String array[] = new String[counter];
 
                     try {
-                        array[0] = jObject.getJSONObject("0fW3diAbM2XGbG7QHPbT").getString("name");
-                        array[1] = jObject.getJSONObject("9ijZBWDS8GdJUh0imgHg").getString("name");
-                        array[2] = jObject.getJSONObject("BIixGicWrM86qQW6vELV").getString("name");
-                        array[3] = jObject.getJSONObject("CqAqKNPyhliigtPnyT2B").getString("name");
-                        array[4] = jObject.getJSONObject("EF0PhXVy8wvAlpVAEfL6").getString("name");
-                        array[5] = jObject.getJSONObject("F5Hn7LSMNmJCdZqvvNps").getString("name");
-                        array[6] = jObject.getJSONObject("FE5YajfbgoM6LbVrB8n5").getString("name");
-                        array[7] = jObject.getJSONObject("FhqQys8RGIsOn65w3pML").getString("name");
-                        array[8] = jObject.getJSONObject("ITVEYiMzGLgFddYeHgLO").getString("name");
-                        array[9] = jObject.getJSONObject("JVNeeK7Zs8YvRApwANPd").getString("name");
-                        array[10] = jObject.getJSONObject("Jphf6xYsyv7xWd8Ml97x").getString("name");
-                        array[11] = jObject.getJSONObject("QIjYBZVaCDm7klkyu3OR").getString("name");
-                        array[12] = jObject.getJSONObject("TRTgEQbGDG28XIJkgTRx").getString("name");
-                        array[13] = jObject.getJSONObject("UtbmzHHAduDNtdZXvfA1").getString("name");
-                        array[14] = jObject.getJSONObject("XkvUTjffuyL3AywF6SOa").getString("name");
-                        array[15] = jObject.getJSONObject("bn5HuqmQZnYuapxP0CMb").getString("name");
-                        array[16] = jObject.getJSONObject("kGQW8gPEOSroZx6zKLrk").getString("name");
-                        array[17] = jObject.getJSONObject("oCYNOCsf0giwm11MXqcl").getString("name");
-                        array[18] = jObject.getJSONObject("rmdxuW4mK6qE0eAD727Z").getString("name");
-                        array[19] = jObject.getJSONObject("t2VZboDxLUkKnN5VhMLB").getString("name");
-                        array[20] = jObject.getJSONObject("xUVGp5YPfW9UhEGUK8jg").getString("name");
+                        Iterator<String> keys = jObject.keys();
+                        int i = 0;
 
+                        while(keys.hasNext() ) {
+                            String key = keys.next();
+                            if (jObject.get(key) instanceof JSONObject) {
+                                array[i] = jObject.getJSONObject(key).getString("name");
+                            }
+                            i++;
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
