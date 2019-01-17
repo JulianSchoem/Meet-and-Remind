@@ -2,6 +2,7 @@
  * EISWS1819MayerSchoemaker
  * by Johanna Mayer & Julian Schoemaker
  * Server to System "Meet & Remind"
+ *
  * Running on https://eisws1819mayerschoemaker.herokuapp.com/
  * (to push this subtree to heroku: git subtree push --prefix Server heroku master)
   */

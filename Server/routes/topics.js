@@ -28,7 +28,6 @@ router.get('/', function (req, res) {
     getCollection(TOPICS).then(result => res.json(result))
 });
 
-
 /*********************************************************************************************************
  * Helper Functions
  * Implemented to avoid redundancy
@@ -53,5 +52,5 @@ getCollection =  function(col) {
     });
 };
 
-//Export as Module
+// export function for server.js
 module.exports = router;

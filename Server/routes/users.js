@@ -283,5 +283,5 @@ getDocument = function(col,doc) {
     });
 };
 
-//Export as Module
+// export function for server.js
 module.exports = router;
