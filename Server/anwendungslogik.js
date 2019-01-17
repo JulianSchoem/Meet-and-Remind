@@ -16,9 +16,6 @@ const USERS = "users";
 const CONTACTS = "contacts";
 const REMINDER = "reminder";
 
-// Init cron-job module
-const schedule = require('node-schedule');
-
 /*********************************************************************************************************
  * Serverseitige Anwendungslogik
  *********************************************************************************************************/
@@ -169,12 +166,13 @@ getAllLabelsInFB = async function() {
  * @param contact
  * @returns {{mainTopic: (*|Node), compare: number}}
  */
-iterateLabels = function(contact) {
-    // count occurrence of labels here
-    let counts = {};
-
-    // compare stored value
-    let compare = 0;
+iterateLabels = function(contact, previousLabels) {
+    let counts;
+    if (previousLabels !== undefined) {
+        counts = previousLabels;
+    } else {
+        counts = {};
+    }
 
     for (let label of contact.labels) {
 
@@ -187,17 +185,9 @@ iterateLabels = function(contact) {
             counts[label] = counts[label] + 1;
         }
 
-        // counts[labelCount] > 0
-        if (counts[label] > compare) {
-            // set compare to counts[labelCount]
-            compare = counts[label];
-            // set most frequent value
-            mainTopic = label;
-        }
     }
 
-    // set {mainTopic : <mainTopic>, compare : <compare>} to get the mainTopic of this user and the count of it
-    return {mainTopic, compare};
+    return counts;
 };
 
 /**
@@ -226,6 +216,60 @@ getContactByID = function(contactUser, userID) {
         }
     }
 };
+/*
+concatLabels = function(array1, array2) {
+    let comparedArray = {};
+
+        // look which array is longer so it can be used in the first for-query
+    let arrayLong = {};
+    let arrayShort = {};
+    if (array1.length > array2.length) {
+        arrayLong = array1;
+        arrayShort = array2;
+    } else {
+        arrayLong = array2;
+        arrayShort = array1;
+    }
+
+    console.log("arrayLong " + JSON.stringify(arrayLong));
+    console.log("arrayShort " + JSON.stringify(arrayShort));
+
+
+    for (var aLong in arrayLong) {
+        for (var aShort in arrayShort) {
+            if (aLong === aShort) {
+                let counter = arrayLong[aLong] + arrayShort[aShort];
+
+                comparedArray = {al : counter}
+            } else {
+                comparedArray = {as : counter}
+            }
+
+
+
+        }
+    }
+
+    return comparedArray;
+};
+*/
+getMainTopic = function(array) {
+    let highestLabelCounter = 0;
+    let highestLabel;
+
+    /** Example array
+     * array = {"Studium":3},{"Beruf":2},{"Sport":2}
+     */
+
+    for (var label in array) {
+        if (array[label] > highestLabelCounter) {
+            highestLabelCounter = array[label];
+            highestLabel = label;
+        }
+    }
+
+    return highestLabel;
+};
 
 /**
  * iterate the contact with the labels and the user of the contact
@@ -239,7 +283,7 @@ iterateContacts = async function(user, labelInfo) {
         let contactID = contact.contactID;
 
         // get the mainTopic of the user itself
-        let mainTopicUser = iterateLabels(contact);
+        let mainTopicUser = iterateLabels(contact, undefined);
 
         // find the contact of the user
         let contactUser = getUserByID(labelInfo, contactID);
@@ -248,18 +292,22 @@ iterateContacts = async function(user, labelInfo) {
         let contactLabels = getContactByID(contactUser, userID);
 
         // now also iterate the labels of the contact to get both mainTopic values
-        let mainTopicContact = iterateLabels(contactLabels);
+        let mergedLabels = iterateLabels(contactLabels, mainTopicUser);
 
-        console.log(contact.contactID + " COUNTS " + JSON.stringify(mainTopicUser));
-        console.log(contact.contactID + " COUNTS " + JSON.stringify(mainTopicContact));
+        // merge both arrays to one
+        //let fullTopicArray = concatLabels(mainTopicUser, mainTopicContact);
 
-        // check which mainTopic is most used
-        if (mainTopicUser.compare > mainTopicContact.compare) {
-            mainTopic = mainTopicUser.mainTopic;
-        } else {
-            mainTopic = mainTopicContact.mainTopic;
+        // get most frequent label
+        let mainTopic = getMainTopic(mergedLabels);
 
-        }
+        console.log("MAIN TOPIC " + JSON.stringify(mainTopic));
+
+        /**
+         * Hier müssen wir jetzt die beiden COUNTS ARRAYs zusammenführen
+         */
+        /**
+         * Danach das gemergete COUNTS ARRAY auf hächstes label prüfen
+         */
 
         //Set the main topic into both user and contact on Firebase
         if (mainTopic) {

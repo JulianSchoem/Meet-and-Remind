@@ -8,6 +8,7 @@
  *********************************************************************************************************/
 
 // Init Firestore
+// TODO Firebase Key has to be deleted before making this Repo public
 const admin = require("firebase-admin");
 const serviceAccount = require("./eisws1819mayerschoemaker-firebase.json");
 admin.initializeApp({
@@ -27,6 +28,9 @@ const settings = {
 // Init Route
 const usersRoute = require('./routes/users');
 const topicsRoute = require('./routes/topics');
+
+// Init cron-job module for Serverseitige Anwendungslogik
+const schedule = require('node-schedule');
 
 // Init Serverseitige Anwendungslogik
 const anwendungslogik = require('./anwendungslogik');
