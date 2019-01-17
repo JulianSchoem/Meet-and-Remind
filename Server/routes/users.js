@@ -150,27 +150,6 @@ router.put('/:uid/contacts/:cid', function (req, res) {
     res.json(name);
 });
 
-/**
- * POST field 'topic' of contact to a user
- */
-router.post('/:uid/contacts/:cid', function (req, res) {
-    // get data out of body and url
-    let topic = req.body;
-    let userID = req.params.uid;
-    let contactID = req.params.cid;
-
-    // safe topic into firebase
-    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(topic, {merge: true});
-
-    // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID;
-
-    // set URI and finish POST
-    res.set('location', contactURI);
-    res.status(201);
-    res.json(topic);
-});
-
 /*********************************************************************************************************
  * Reminder
  *********************************************************************************************************/

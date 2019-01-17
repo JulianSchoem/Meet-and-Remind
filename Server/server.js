@@ -29,11 +29,11 @@ const settings = {
 const usersRoute = require('./routes/users');
 const topicsRoute = require('./routes/topics');
 
-// Init cron-job module for Serverseitige Anwendungslogik
+// Init cron-job module for Server Application Logic
 const schedule = require('node-schedule');
 
-// Init Serverseitige Anwendungslogik
-const anwendungslogik = require('./anwendungslogik');
+// Init Server Application Logic (Serverseitige Anwendungslogik)
+const applicationlogic = require('./applicationlogic');
 
 /*********************************************************************************************************
  * Server Methodes
@@ -76,7 +76,7 @@ function initServer() {
      * WITHOUT Cronjob for the Serverseitige Anwendungslogik
      * Because of frequence that would be scheduled on Heroku
      */
-    anwendungslogik.setMainTopic();
+    applicationlogic.setMainTopic();
 
 }
 

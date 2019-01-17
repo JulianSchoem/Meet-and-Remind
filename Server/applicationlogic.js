@@ -17,7 +17,7 @@ const CONTACTS = "contacts";
 const REMINDER = "reminder";
 
 /*********************************************************************************************************
- * Serverseitige Anwendungslogik
+ * Server Application Logic
  *********************************************************************************************************/
 
 /**
@@ -38,7 +38,6 @@ getUser = async function() {
                 });
             })
             .then(function () {
-                //console.log("Get User: " + JSON.stringify(userArray, null, 2));
                 resolve(userArray);
             });
     });
@@ -167,10 +166,13 @@ getAllLabelsInFB = async function() {
  * @returns {{mainTopic: (*|Node), compare: number}}
  */
 iterateLabels = function(contact, previousLabels) {
+    // counts will be the array with the counter of the labels
     let counts;
     if (previousLabels !== undefined) {
+        // this case will run if the contact labels are iterated (second run of function)
         counts = previousLabels;
     } else {
+        // this case will run if the user labels are iterated (first run of function)
         counts = {};
     }
 
@@ -181,7 +183,7 @@ iterateLabels = function(contact, previousLabels) {
             // set count[labelCount] value to 1
             counts[label] = 1;
         } else {
-            // increment existing value
+            // increment existing label with previous value
             counts[label] = counts[label] + 1;
         }
 
@@ -216,43 +218,12 @@ getContactByID = function(contactUser, userID) {
         }
     }
 };
-/*
-concatLabels = function(array1, array2) {
-    let comparedArray = {};
 
-        // look which array is longer so it can be used in the first for-query
-    let arrayLong = {};
-    let arrayShort = {};
-    if (array1.length > array2.length) {
-        arrayLong = array1;
-        arrayShort = array2;
-    } else {
-        arrayLong = array2;
-        arrayShort = array1;
-    }
-
-    console.log("arrayLong " + JSON.stringify(arrayLong));
-    console.log("arrayShort " + JSON.stringify(arrayShort));
-
-
-    for (var aLong in arrayLong) {
-        for (var aShort in arrayShort) {
-            if (aLong === aShort) {
-                let counter = arrayLong[aLong] + arrayShort[aShort];
-
-                comparedArray = {al : counter}
-            } else {
-                comparedArray = {as : counter}
-            }
-
-
-
-        }
-    }
-
-    return comparedArray;
-};
-*/
+/**
+ *
+ * @param array
+ * @returns {*}
+ */
 getMainTopic = function(array) {
     let highestLabelCounter = 0;
     let highestLabel;
@@ -294,20 +265,10 @@ iterateContacts = async function(user, labelInfo) {
         // now also iterate the labels of the contact to get both mainTopic values
         let mergedLabels = iterateLabels(contactLabels, mainTopicUser);
 
-        // merge both arrays to one
-        //let fullTopicArray = concatLabels(mainTopicUser, mainTopicContact);
-
-        // get most frequent label
+        // get most frequent label of the merged labels of both users
         let mainTopic = getMainTopic(mergedLabels);
 
-        console.log("MAIN TOPIC " + JSON.stringify(mainTopic));
-
-        /**
-         * Hier müssen wir jetzt die beiden COUNTS ARRAYs zusammenführen
-         */
-        /**
-         * Danach das gemergete COUNTS ARRAY auf hächstes label prüfen
-         */
+        //console.log("MAIN TOPIC " + JSON.stringify(mainTopic));
 
         //Set the main topic into both user and contact on Firebase
         if (mainTopic) {
