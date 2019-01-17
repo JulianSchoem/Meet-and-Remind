@@ -11,7 +11,7 @@
  * Inits & Modules
  *********************************************************************************************************/
 
-// Init Firestore
+// Init Firestore/Firebase
 // TODO Firebase Key has to be deleted before making this Repo public
 const admin = require("firebase-admin");
 const serviceAccount = require("./eisws1819mayerschoemaker-firebase.json");

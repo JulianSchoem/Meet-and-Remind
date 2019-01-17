@@ -2,7 +2,7 @@
  * Inits & Modules
  *********************************************************************************************************/
 
-// Init Firestore
+// Init Firestore/Firebase
 const admin = require("firebase-admin");
 const db = admin.firestore();
 
