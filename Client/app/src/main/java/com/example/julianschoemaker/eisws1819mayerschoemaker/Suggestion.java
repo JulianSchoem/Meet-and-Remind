@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -85,6 +84,7 @@ public class Suggestion extends AppCompatActivity {
                 webView.getSettings().setDomStorageEnabled(true);
                 webView.loadUrl(url[0]);
                 webText.setText(url[0]);
+
                 progress.setVisibility(View.GONE);
             }
         };

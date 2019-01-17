@@ -6,14 +6,17 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.RingtoneManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,12 +49,16 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
     private ListView listview_contactList;
     FrameLayout touch_area_chat;
+    ProgressBar progress;
 
     //TODO Bei Match Themenvorschlag blaues Icon!
 
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_contact_list);
+
+        ServerClass serverClass = new ServerClass();
+        serverClass.start();
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbarList);
         mToolbar.setTitle(getString(R.string.app_name));
@@ -65,10 +73,11 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
         listview_contactList = (ListView) findViewById(R.id.listview_contactlist);
 
+        progress = findViewById(R.id.progressBarContactList);
+
         OkHttpClient client = new OkHttpClient();
 
         String url = "https://eisws1819mayerschoemaker.herokuapp.com/users/0C:8F:FF:C7:92:2C/contacts";
-        final String array[] = new String[1];
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -76,6 +85,28 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Log.v("abc", "Check Internet");
+
+                ContactList.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progress.setVisibility(View.GONE);
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(ContactList.this);
+                        dialog.setCancelable(false);
+                        dialog.setTitle("Fehler");
+                        dialog.setMessage("Überprüfe deine Internetverbindung und starte die App neu" );
+                        dialog.setPositiveButton("App schließen", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                finish();
+                            }
+                        });
+
+                        final AlertDialog alert = dialog.create();
+                        alert.show();
+                    }
+                });
+
                 }
 
                 @Override
@@ -124,6 +155,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
                         ContactList.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                progress.setVisibility(View.GONE);
                                 listview_contactList.setAdapter(new AdapterContactList(getApplicationContext(), array));
                             }
                         });
@@ -137,11 +169,11 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         //Notify Service
         MessageReceiver receiver = new MessageReceiver(new Message());
         Intent serviceIntent = new Intent(this, NotifyService.class);
-        serviceIntent.putExtra("time", 10);
         serviceIntent.putExtra("receiver", receiver);
         startService(serviceIntent);
 
         }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

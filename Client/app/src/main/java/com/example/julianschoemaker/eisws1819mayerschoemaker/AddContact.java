@@ -218,8 +218,7 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                     registerReceiver(broadcastReceiverDevices, intentFilter);
 
-                    ServerClass serverClass = new ServerClass();
-                    serverClass.start();
+
                 }
             }
         });
@@ -233,9 +232,7 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
         listview_bondedDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BluetoothDevice device = pairedDevicesList.get(position);
-                ClientClass clientClass = new ClientClass(device);
-                clientClass.start();
+
 
                 /**
                 ClientClass arrayClients[] = new ClientClass[pairedDevicesList.size()];
@@ -252,7 +249,6 @@ public class AddContact extends AppCompatActivity implements AdapterView.OnItemC
         });
 
     }
-
 
     public void bluetoothEnableDisable() {
         if(mybluetoothAdapter == null) {

@@ -11,12 +11,14 @@ class AdapterReminderList extends BaseAdapter {
 
     Context context;
     String[] data;
+    String[] dataReminder;
     private static LayoutInflater inflater = null;
 
-    public AdapterReminderList(Context context, String[] data) {
+    public AdapterReminderList(Context context, String[] dataName, String[] dataReminder) {
         // Auto-generated constructor stub
         this.context = context;
-        this.data = data;
+        this.data = dataName;
+        this.dataReminder = dataReminder;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -46,7 +48,9 @@ class AdapterReminderList extends BaseAdapter {
         if (vi == null)
             vi = inflater.inflate(R.layout.remind_item, null);
         TextView txt_contactName = (TextView) vi.findViewById(R.id.txt_contactName);
+        TextView txt_contactReminder = vi.findViewById(R.id.txt_contactReminder);
         txt_contactName.setText(data[position]);
+        txt_contactReminder.setText(dataReminder[position]);
         return vi;
     }
 }
