@@ -1,15 +1,15 @@
 package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
 import android.content.DialogInterface;
-import android.content.Intent;
+
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.AbsListView;
+
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -161,7 +161,13 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
         ImageView img_check = view.findViewById(R.id.img_check);
+
+        img_check.setBackgroundResource(R.drawable.list_activated_background);
+
+        /**
+         ImageView img_check = view.findViewById(R.id.img_check);
 
         if (img_check.getVisibility() == View.VISIBLE) {
             if ( oneIsChecked == true) {
@@ -173,7 +179,7 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
                 img_check.setVisibility(View.VISIBLE);
                 oneIsChecked = true;
             }
-        }
+        }**/
 
         //TODO Label für Themenvorschlag beim Speichern übergeben
         // TODO BUG: wenn Beschreibung länger, in Liste 2 Häkchen...

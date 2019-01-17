@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -28,7 +29,6 @@ import okhttp3.Response;
 
 public class ContactDetail extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    public static String BlueID = "BTID";
 
     private FloatingActionButton fbtn_AddReminder;
 
@@ -36,6 +36,7 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
 
     ImageView img_delete;
     FrameLayout fl_touch_area;
+    ProgressBar progress;
 
     Toolbar mToolbar;
 
@@ -44,9 +45,10 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_detail);
 
+
         mToolbar = (Toolbar) findViewById(R.id.toolbarDetailC);
-        BlueID = getIntent().getExtras().getString(BlueID);
-        mToolbar.setTitle(BlueID);
+        String blueID = getIntent().getExtras().getString("BTID");
+        mToolbar.setTitle(blueID);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,9 +70,11 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
         fbtn_AddReminder = findViewById(R.id.fabReminder);
         listview_reminderList = findViewById(R.id.listview_reminderlist);
 
+        progress = findViewById(R.id.progressBarContactDetail);
+
         OkHttpClient client = new OkHttpClient();
 
-        String url = "https://eisws1819mayerschoemaker.herokuapp.com/users/0C:8F:FF:C7:92:2C/contacts/"+BlueID+"/reminder";
+        String url = "https://eisws1819mayerschoemaker.herokuapp.com/users/0C:8F:FF:C7:92:2C/contacts/"+blueID+"/reminder";
 
         Request request = new Request.Builder()
                 .url(url)
@@ -107,6 +111,7 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
                         }
                     }
                     final String array[] = new String[counter];
+                    final String arrayRemind[] = new String[counter];
 
                     try {
                         Iterator<String> keys = jObject.keys();
@@ -116,6 +121,7 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
                             String key = keys.next();
                             if (jObject.get(key) instanceof JSONObject) {
                                 array[i] = jObject.getJSONObject(key).getString("title");
+                                arrayRemind[i] = jObject.getJSONObject(key).getString("description");
                             }
                             i++;
                         }
@@ -127,7 +133,9 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
                     ContactDetail.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listview_reminderList.setAdapter(new AdapterReminderList(getApplicationContext(), array));
+                            progress.setVisibility(View.GONE);
+                            listview_reminderList.setAdapter(new AdapterReminderList(getApplicationContext(), array, arrayRemind));
+
                         }
                     });
                 }

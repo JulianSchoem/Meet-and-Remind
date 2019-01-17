@@ -41,6 +41,7 @@ public class AdapterLabelList extends BaseAdapter {
         return position;
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Auto-generated method stub
@@ -54,6 +55,8 @@ public class AdapterLabelList extends BaseAdapter {
         } else {
             vi.setBackgroundResource(R.color.colorListGrey);
         }
+
+
         TextView txt_labelName = (TextView) vi.findViewById(R.id.txt_labelName);
         txt_labelName.setText(data[position]);
 
