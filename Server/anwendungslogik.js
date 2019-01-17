@@ -16,9 +16,6 @@ const USERS = "users";
 const CONTACTS = "contacts";
 const REMINDER = "reminder";
 
-// Init cron-job module
-const schedule = require('node-schedule');
-
 /*********************************************************************************************************
  * Serverseitige Anwendungslogik
  *********************************************************************************************************/
@@ -173,26 +170,18 @@ iterateLabels = function(contact) {
     // count occurrence of labels here
     let counts = [];
 
-    // compare stored value
-    let compare = 0;
-
     for (let label of contact.labels) {
 
-        // if count[labelCount] doesn't exist
         if (counts[label] === undefined) {
-            // set count[labelCount] value to 1
-            counts.push( label : 1);
+            counts[label] = 1;
         } else {
-            // increment existing value
             counts[label] = counts[label] + 1;
         }
 
-        // counts[labelCount] > 0
-        if (counts[label] > compare) {
-            // set compare to counts[labelCount]
-            compare = counts[label];
-        }
+        console.log("for labels: " + JSON.stringify(counts));
     }
+
+    console.log("iterateLabel: " + JSON.stringify(counts));
 
     return counts;
 };
@@ -225,38 +214,16 @@ getContactByID = function(contactUser, userID) {
 };
 
 concatLabels = function(array1, array2) {
-    let comparedArray = {};
-
+    let comparedArray = [];
     /** Example arrays
-     array1 = {"Beruf":2,"Sport":1}
-     array2 = {"Studium":2,"Beruf":1,"Sport":1}
+     array1 = [{"Beruf":2},{"Sport":1}]
+     array2 = [{"Studium":2},{"Beruf":1},{"Sport":1}]
     */
     // look which array is longer so it can be used in the first for-query
-    let arrayLong = {};
-    let arrayShort = {};
-    if (array1.length > array2.length) {
-        arrayLong = array1;
-        arrayShort = array2;
-    } else {
-        arrayLong = array2;
-        arrayShort = array1;
-    }
 
-    console.log("arrayLong " + JSON.stringify(arrayLong));
-    console.log("arrayShort " + JSON.stringify(arrayShort));
 
     // iterate through both arrays and look which properties are equal
-    for (let al of arrayLong) {
-        for (let as of arrayShort) {
-            if (al === as) {
-                let counter = arrayLong[al] + arrayShort[as];
-                comparedArray = {al : counter}
-            } else {
-                comparedArray = {as : counter}
-            }
-        }
 
-    }
 
     return comparedArray;
 };
@@ -265,14 +232,9 @@ getMainTopic = function(array) {
     let highestLabel = 0;
 
     /** Example array
-     * array = {"Beruf": 3, "Sport": 2, "Studium": 2}
+     * array = [{"Studium":3},{"Beruf":2},{"Sport":2}]
      */
 
-    for (let label of array) {
-        if (array[label] > highestLabel) {
-            highestLabel = array[label];
-        }
-    }
 
     return highestLabel;
 };
