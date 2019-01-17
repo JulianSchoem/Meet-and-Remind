@@ -17,9 +17,6 @@ const USERS = "users";
 const CONTACTS = "contacts";
 const REMINDER = "reminder";
 
-// Init cron-job module
-const schedule = require('node-schedule');
-
 /*********************************************************************************************************
  * REST Methodes
  *********************************************************************************************************/
@@ -45,7 +42,7 @@ router.get('/:uid', function (req, res) {
 
 /**
  * POST one user
- * NOT NECESSARY BECAUSE WE CREATE A USER WHEN ADDING FIRST CONTACT
+ * Not currently necessary because we create a user when adding first contact
  */
 router.post('/', function (req, res) {
     // get data out of body and url
@@ -167,7 +164,7 @@ router.get('/:uid/contacts/:cid/reminder' ,function (req, res) {
 
 /**
  * GET one reminder for one contact
- * GET priority of one reminder to increase it in 'Clientseitige Anwendungslogik'
+ * GET priority of one reminder to increase it in Client Applicationlogic
  */
 router.get('/:uid/contacts/:cid/reminder/:rid' ,function (req, res) {
     // get data out of body and url
@@ -204,7 +201,7 @@ router.post('/:uid/contacts/:cid/reminder', function (req, res) {
 
 /**
  * PUT one reminder of a contact (update on reminder)
- * PUT priority of one reminder after increase in 'Clientseitige Anwendungslogik'
+ * PUT priority of one reminder after increase in Client Applicationlogic
  */
 router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
     // get data out of body and url
@@ -271,6 +268,7 @@ getCollection =  function(col) {
         });
     });
 };
+
 /**
  * Returns a Promise that represents one document in a collection
  */
