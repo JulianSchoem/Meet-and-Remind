@@ -166,22 +166,26 @@ getAllLabelsInFB = async function() {
  * @param contact
  * @returns {{mainTopic: (*|Node), compare: number}}
  */
-iterateLabels = function(contact) {
-    // count occurrence of labels here
-    let counts = [];
+iterateLabels = function(contact, previousLabels) {
+    let counts;
+    if (previousLabels !== undefined) {
+        counts = previousLabels;
+    } else {
+        counts = {};
+    }
 
     for (let label of contact.labels) {
 
+        // if count[labelCount] doesn't exist
         if (counts[label] === undefined) {
+            // set count[labelCount] value to 1
             counts[label] = 1;
         } else {
+            // increment existing value
             counts[label] = counts[label] + 1;
         }
 
-        console.log("for labels: " + JSON.stringify(counts));
     }
-
-    console.log("iterateLabel: " + JSON.stringify(counts));
 
     return counts;
 };
@@ -212,29 +216,57 @@ getContactByID = function(contactUser, userID) {
         }
     }
 };
-
+/*
 concatLabels = function(array1, array2) {
-    let comparedArray = [];
-    /** Example arrays
-     array1 = [{"Beruf":2},{"Sport":1}]
-     array2 = [{"Studium":2},{"Beruf":1},{"Sport":1}]
-    */
-    // look which array is longer so it can be used in the first for-query
+    let comparedArray = {};
+
+        // look which array is longer so it can be used in the first for-query
+    let arrayLong = {};
+    let arrayShort = {};
+    if (array1.length > array2.length) {
+        arrayLong = array1;
+        arrayShort = array2;
+    } else {
+        arrayLong = array2;
+        arrayShort = array1;
+    }
+
+    console.log("arrayLong " + JSON.stringify(arrayLong));
+    console.log("arrayShort " + JSON.stringify(arrayShort));
 
 
-    // iterate through both arrays and look which properties are equal
+    for (var aLong in arrayLong) {
+        for (var aShort in arrayShort) {
+            if (aLong === aShort) {
+                let counter = arrayLong[aLong] + arrayShort[aShort];
 
+                comparedArray = {al : counter}
+            } else {
+                comparedArray = {as : counter}
+            }
+
+
+
+        }
+    }
 
     return comparedArray;
 };
-
+*/
 getMainTopic = function(array) {
-    let highestLabel = 0;
+    let highestLabelCounter = 0;
+    let highestLabel;
 
     /** Example array
-     * array = [{"Studium":3},{"Beruf":2},{"Sport":2}]
+     * array = {"Studium":3},{"Beruf":2},{"Sport":2}
      */
 
+    for (var label in array) {
+        if (array[label] > highestLabelCounter) {
+            highestLabelCounter = array[label];
+            highestLabel = label;
+        }
+    }
 
     return highestLabel;
 };
@@ -251,7 +283,7 @@ iterateContacts = async function(user, labelInfo) {
         let contactID = contact.contactID;
 
         // get the mainTopic of the user itself
-        let mainTopicUser = iterateLabels(contact);
+        let mainTopicUser = iterateLabels(contact, undefined);
 
         // find the contact of the user
         let contactUser = getUserByID(labelInfo, contactID);
@@ -260,18 +292,15 @@ iterateContacts = async function(user, labelInfo) {
         let contactLabels = getContactByID(contactUser, userID);
 
         // now also iterate the labels of the contact to get both mainTopic values
-        let mainTopicContact = iterateLabels(contactLabels);
+        let mergedLabels = iterateLabels(contactLabels, mainTopicUser);
 
         // merge both arrays to one
         //let fullTopicArray = concatLabels(mainTopicUser, mainTopicContact);
 
         // get most frequent label
-        //let mainTopic = getMainTopic(fullTopicArray);
+        let mainTopic = getMainTopic(mergedLabels);
 
-        console.log(user.userID + " USER COUNTS " + JSON.stringify(mainTopicUser));
-        console.log(contact.contactID + " CONTACT COUNTS " + JSON.stringify(mainTopicContact));
-        console.log("FINAL COUNTS " + JSON.stringify(fullTopicArray));
-        console.log("MAIN TOPIC " + mainTopic);
+        console.log("MAIN TOPIC " + JSON.stringify(mainTopic));
 
         /**
          * Hier müssen wir jetzt die beiden COUNTS ARRAYs zusammenführen
