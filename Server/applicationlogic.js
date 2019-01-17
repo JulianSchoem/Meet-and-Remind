@@ -8,16 +8,13 @@
 const admin = require("firebase-admin");
 const db = admin.firestore();
 
-// Init Express
-const express = require('express');
-
 // Init Routes
 const USERS = "users";
 const CONTACTS = "contacts";
 const REMINDER = "reminder";
 
 /*********************************************************************************************************
- * Serverseitige Anwendungslogik
+ * Server Application Logic
  *********************************************************************************************************/
 
 /**
@@ -26,7 +23,7 @@ const REMINDER = "reminder";
  */
 getUser = async function() {
     let userArray = [];
-    usersCollection = db.collection(USERS);
+    let usersCollection = db.collection(USERS);
 
     return new Promise(function(resolve) {
 
@@ -38,7 +35,6 @@ getUser = async function() {
                 });
             })
             .then(function () {
-                //console.log("Get User: " + JSON.stringify(userArray, null, 2));
                 resolve(userArray);
             });
     });
@@ -51,7 +47,7 @@ getUser = async function() {
  */
 getContactsFromFb = async function(user) {
     user.contacts = [];
-    contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
+    let contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
 
     return new Promise(function(resolve) {
 
@@ -92,10 +88,9 @@ getContacts = async function(userArray) {
 getLabelsFromFb = async function(user, contact) {
     contact.labels = [];
 
-    reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).collection(REMINDER);
+    let reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).collection(REMINDER);
 
     return new Promise(function(resolve) {
-
         reminderCollection.get()
             .then(snapshot => {
                 snapshot.forEach(reminder => {
@@ -109,7 +104,6 @@ getLabelsFromFb = async function(user, contact) {
                 resolve(user);
             });
     });
-
 };
 
 /**
@@ -145,11 +139,10 @@ getLabels = async function(userArray) {
  * @returns {Promise<void>}
  */
 getAllLabelsInFB = async function() {
-
-    //get all users and push them into JSON
+    // get all users and push them into JSON
     let resultWithUsers = await getUser();
 
-    //get all contacts from Firebase and push them to the user
+    // get all contacts from Firebase and push them to the user
     let resultWithContacts = await getContacts(resultWithUsers);
 
     // get all labels from Firebase and push them to one contact of a user
@@ -162,15 +155,18 @@ getAllLabelsInFB = async function() {
 // TODO: beim ersten durchlaufen user -> contact ein flag(field) bei beiden setzen, dass sie bereits gehandled wurden
 
 /**
- * iterate the labels to count which label is the most frequent one
+ * iterate the labels and count how often they are set
  * @param contact
  * @returns {{mainTopic: (*|Node), compare: number}}
  */
 iterateLabels = function(contact, previousLabels) {
+    // counts will be the array with the counter of the labels
     let counts;
     if (previousLabels !== undefined) {
+        // this case will run if the contact labels are iterated (second run of function)
         counts = previousLabels;
     } else {
+        // this case will run if the user labels are iterated (first run of function)
         counts = {};
     }
 
@@ -181,7 +177,7 @@ iterateLabels = function(contact, previousLabels) {
             // set count[labelCount] value to 1
             counts[label] = 1;
         } else {
-            // increment existing value
+            // increment existing label with previous value
             counts[label] = counts[label] + 1;
         }
 
@@ -191,7 +187,7 @@ iterateLabels = function(contact, previousLabels) {
 };
 
 /**
- * get the user of the contact that needs to be analysed by its labels
+ * get the opposite of the user that needs to be analysed by its labels
  * @param labelInfo
  * @param userID
  */
@@ -204,7 +200,7 @@ getUserByID = function(labelInfo, userID) {
 };
 
 /**
- * get the labels of the contacts user
+ * get the opposite user with all his ID and labels
  * @param contactUser
  * @param userID
  * @returns {*}
@@ -216,51 +212,17 @@ getContactByID = function(contactUser, userID) {
         }
     }
 };
-/*
-concatLabels = function(array1, array2) {
-    let comparedArray = {};
 
-        // look which array is longer so it can be used in the first for-query
-    let arrayLong = {};
-    let arrayShort = {};
-    if (array1.length > array2.length) {
-        arrayLong = array1;
-        arrayShort = array2;
-    } else {
-        arrayLong = array2;
-        arrayShort = array1;
-    }
-
-    console.log("arrayLong " + JSON.stringify(arrayLong));
-    console.log("arrayShort " + JSON.stringify(arrayShort));
-
-
-    for (var aLong in arrayLong) {
-        for (var aShort in arrayShort) {
-            if (aLong === aShort) {
-                let counter = arrayLong[aLong] + arrayShort[aShort];
-
-                comparedArray = {al : counter}
-            } else {
-                comparedArray = {as : counter}
-            }
-
-
-
-        }
-    }
-
-    return comparedArray;
-};
-*/
+/**
+ * analyse the merged labels of user and opposite which label is the most used
+ * @param array
+ * @returns {*}
+ */
 getMainTopic = function(array) {
     let highestLabelCounter = 0;
     let highestLabel;
 
-    /** Example array
-     * array = {"Studium":3},{"Beruf":2},{"Sport":2}
-     */
-
+    // set the counter to the value of the most frequent and also set a variable to the label that is most frequent
     for (var label in array) {
         if (array[label] > highestLabelCounter) {
             highestLabelCounter = array[label];
@@ -279,37 +241,31 @@ getMainTopic = function(array) {
  */
 iterateContacts = async function(user, labelInfo) {
     for (let contact of user.contacts) {
+        // save current userID and contactID to use it later for Firebase update
         let userID = user.userID;
         let contactID = contact.contactID;
 
-        // get the mainTopic of the user itself
+        // get the mainTopic of the user itself (later get it from the opposite)
         let mainTopicUser = iterateLabels(contact, undefined);
+        // now we have to labels of the user
 
-        // find the contact of the user
+        // find the opposite of the user
         let contactUser = getUserByID(labelInfo, contactID);
+        // now we know which user is the opposite
 
-        // get the labels of the contactUser
+        // get the labels of the opposite
         let contactLabels = getContactByID(contactUser, userID);
+        // noew we now the labels of the opposite user
 
-        // now also iterate the labels of the contact to get both mainTopic values
+        // also iterate the labels of the opposite and add them to the users labels
         let mergedLabels = iterateLabels(contactLabels, mainTopicUser);
+        // now we have labels of both user and opposite
 
-        // merge both arrays to one
-        //let fullTopicArray = concatLabels(mainTopicUser, mainTopicContact);
-
-        // get most frequent label
+        // get most frequent label of both users
         let mainTopic = getMainTopic(mergedLabels);
+        // now we have the string of the most frequent label that is set contact as a property
 
-        console.log("MAIN TOPIC " + JSON.stringify(mainTopic));
-
-        /**
-         * Hier müssen wir jetzt die beiden COUNTS ARRAYs zusammenführen
-         */
-        /**
-         * Danach das gemergete COUNTS ARRAY auf hächstes label prüfen
-         */
-
-        //Set the main topic into both user and contact on Firebase
+        // set the main topic into both user and contact on Firebase
         if (mainTopic) {
             await db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({topic : mainTopic}, {merge: true});
             await db.collection(USERS).doc(contactID).collection(CONTACTS).doc(userID).set({topic : mainTopic}, {merge: true});
@@ -318,7 +274,7 @@ iterateContacts = async function(user, labelInfo) {
 };
 
 /**
- * iterate the generated JSON to get the most frequent label
+ * iterate the generated JSON to get the most frequent label in the end
  * @param labelInfo
  * @returns {Promise<void>}
  */
@@ -333,9 +289,11 @@ getLabelCount = async function(labelInfo) {
 setMainTopic = async function() {
     // get all labels of reminders that users set to their contacts
     let labelInfo = await getAllLabelsInFB();
+    // now we have multiple user -> their contacts -> chosen labels of reminder
 
-    // count which label is the most used and set it to Firebase
+    // count which label is the most used for user and his opposite and set it to Firebase
     await getLabelCount(labelInfo);
+    // now the most frequent label of all user and their opposite is set to Firebase
 
     console.log("------------------ FINISHED SERVERSEITIGE ANWENDUNGSLOGIK");
 };

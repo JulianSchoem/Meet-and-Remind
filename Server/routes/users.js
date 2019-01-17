@@ -17,9 +17,6 @@ const USERS = "users";
 const CONTACTS = "contacts";
 const REMINDER = "reminder";
 
-// Init cron-job module
-const schedule = require('node-schedule');
-
 /*********************************************************************************************************
  * REST Methodes
  *********************************************************************************************************/
@@ -45,7 +42,7 @@ router.get('/:uid', function (req, res) {
 
 /**
  * POST one user
- * NOT NECESSARY BECAUSE WE CREATE A USER WHEN ADDING FIRST CONTACT
+ * Not currently necessary because we create a user when adding first contact
  */
 router.post('/', function (req, res) {
     // get data out of body and url
@@ -150,27 +147,6 @@ router.put('/:uid/contacts/:cid', function (req, res) {
     res.json(name);
 });
 
-/**
- * POST field 'topic' of contact to a user
- */
-router.post('/:uid/contacts/:cid', function (req, res) {
-    // get data out of body and url
-    let topic = req.body;
-    let userID = req.params.uid;
-    let contactID = req.params.cid;
-
-    // safe topic into firebase
-    db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(topic, {merge: true});
-
-    // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID;
-
-    // set URI and finish POST
-    res.set('location', contactURI);
-    res.status(201);
-    res.json(topic);
-});
-
 /*********************************************************************************************************
  * Reminder
  *********************************************************************************************************/
@@ -188,7 +164,7 @@ router.get('/:uid/contacts/:cid/reminder' ,function (req, res) {
 
 /**
  * GET one reminder for one contact
- * GET priority of one reminder to increase it in 'Clientseitige Anwendungslogik'
+ * GET priority of one reminder to increase it in Client Applicationlogic
  */
 router.get('/:uid/contacts/:cid/reminder/:rid' ,function (req, res) {
     // get data out of body and url
@@ -225,7 +201,7 @@ router.post('/:uid/contacts/:cid/reminder', function (req, res) {
 
 /**
  * PUT one reminder of a contact (update on reminder)
- * PUT priority of one reminder after increase in 'Clientseitige Anwendungslogik'
+ * PUT priority of one reminder after increase in Client Applicationlogic
  */
 router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
     // get data out of body and url
@@ -292,6 +268,7 @@ getCollection =  function(col) {
         });
     });
 };
+
 /**
  * Returns a Promise that represents one document in a collection
  */
