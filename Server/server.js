@@ -60,20 +60,25 @@ function initServer() {
     });
 
     /**
-     * Cronjob for the Server Applicationlogic
-     * Run it every minute (just for debugging and presentation of the Applicationlogic)
+     * WITH Cronjob for the Server Applicationlogic
+     * Run it every minute
+     * dont want to use it on Heroku because of the frequency we would have Heroku app online
+     * would run every day on something like 23:59 with cron job in production
      */
 
+    /**
     schedule.scheduleJob("* /1 * * * *", function() {
         // main function for Server Applicationlogic
         console.log("TEST SCHEDULE");
         applicationlogic.setMainTopic();
         console.log("------------------ FINISHED CRONJOB");
     });
+    **/
 
     /**
      * WITHOUT Cronjob for the Server Applicationlogic
-     * Because of frequency that would be scheduled on Heroku
+     * for debugging and presentation of the Applicationlogic
+     * would run every day on something like 23:59 with cron job in production
      */
     applicationlogic.setMainTopic();
 
