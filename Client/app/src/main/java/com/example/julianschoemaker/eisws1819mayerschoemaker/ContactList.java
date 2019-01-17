@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -51,6 +52,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     FrameLayout touch_area_chat;
     ProgressBar progress;
 
+
     //TODO Bei Match Themenvorschlag blaues Icon!
 
     public void onCreate(Bundle saveInstanceState) {
@@ -74,6 +76,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         listview_contactList = (ListView) findViewById(R.id.listview_contactlist);
 
         progress = findViewById(R.id.progressBarContactList);
+
 
         OkHttpClient client = new OkHttpClient();
 
@@ -163,13 +166,10 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
             }
         });
 
-
         listview_contactList.setOnItemClickListener(ContactList.this);
 
         //Notify Service
-        MessageReceiver receiver = new MessageReceiver(new Message());
         Intent serviceIntent = new Intent(this, NotifyService.class);
-        serviceIntent.putExtra("receiver", receiver);
         startService(serviceIntent);
 
         }
@@ -191,41 +191,6 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         String bluetoothID = listview_contactList.getAdapter().getItem(position).toString();
         activityIntent.putExtra("BTID", bluetoothID);
         startActivity(activityIntent);
-    }
-
-    public class Message {
-
-        private static final int NOTIFICATION_ID = 1;
-        private static final String NOTIFICATION_CHANNEL_ID = "my_notification_channel";
-
-        public void displayMessage(int resultCode, Bundle resultData) {
-
-            String message = resultData.getString("message");
-
-            NotificationManager nm = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            Intent resultIntent = new Intent(getApplicationContext(), ReminderDetail.class);
-            // TODO which Reminder Detail? putExtra()/Parameter..!
-            resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            PendingIntent resultPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                NotificationChannel nChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-
-                //Configure
-                nChannel.enableLights(true);
-                nChannel.setLightColor(Color.CYAN);
-                nm.createNotificationChannel(nChannel);
-            }
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                    .setSmallIcon(R.drawable.logo_meet_remind)
-                    .setContentTitle(""+resultCode)
-                    .setContentText(""+message)
-                    .setContentIntent(resultPendingIntent);
-
-            nm.notify(NOTIFICATION_ID, builder.build());
-        }
     }
 
 

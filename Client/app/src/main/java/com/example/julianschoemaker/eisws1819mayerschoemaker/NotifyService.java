@@ -3,18 +3,26 @@ package com.example.julianschoemaker.eisws1819mayerschoemaker;
 import android.annotation.SuppressLint;
 import android.app.IntentService;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.ResultReceiver;
 
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.io.IOException;
@@ -42,6 +50,99 @@ public class NotifyService extends IntentService {
 
     static String state = "NONE";
 
+    private static final int NOTIFICATION_ID = 1;
+    private static final String NOTIFICATION_CHANNEL_ID = "my_notification_channel";
+
+    public NotifyService(){
+        super("Notify Service");
+    }
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.v("abc", "Timer has started");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+
+        // Service läuft weiter, auch wenn App geschlossen wird.
+        return START_STICKY;
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        while(intent == null){
+            checkConnection();
+        }
+
+        while(true) {
+            // TODO Wo Server Socket erstellen? In Intent Service wäre praktisch, wenns geht..
+            checkConnection();
+        }
+    }
+
+    public void checkConnection(){
+
+        // TODO Should be in Shared Preferences for Improved Code
+        ArrayList<BluetoothDevice> pairedDeviceList = new ArrayList<>();
+        BluetoothAdapter mybluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Set<BluetoothDevice> bt = mybluetoothAdapter.getBondedDevices();
+
+        if (bt.size() > 0) {
+
+            for (BluetoothDevice device : bt) {
+                pairedDeviceList.add(device);
+            }
+        }
+
+        for (int i= 0; i<pairedDeviceList.size(); i++)
+        {
+            try {
+                Log.v("abc", "(intent not null) device = " + pairedDeviceList.get(i).getName());
+                BluetoothDevice device = pairedDeviceList.get(i);
+                ClientClass clientClass = new ClientClass(device);
+                clientClass.start();
+                Thread.sleep(15000);
+                Log.v("abc", "(intent not null) state = " + state);
+                if (state.equals("CONNECTED")){
+                    sendNotification();
+
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void sendNotification(){
+        NotificationManager nm = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent resultIntent = new Intent(getApplicationContext(), ReminderDetail.class);
+        // TODO which Reminder Detail? putExtra()/Parameter..!
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel nChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+
+            //Configure
+            nChannel.enableLights(true);
+            nChannel.setLightColor(Color.CYAN);
+            nm.createNotificationChannel(nChannel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setSmallIcon(R.drawable.logo_meet_remind)
+                .setContentTitle("Ein Freund ist in der Nähe!")
+                .setContentText("Überprüfe, ob du eine offene Erinnerung hast!")
+                .setContentIntent(resultPendingIntent);
+
+        nm.notify(NOTIFICATION_ID, builder.build());
+    }
 
     static Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -66,90 +167,6 @@ public class NotifyService extends IntentService {
             return false;
         }
     });
-
-
-    public NotifyService(){
-        super("Notify Service");
-    }
-
-    public static void sendNotification(ResultReceiver receiver) {
-
-        Bundle bundle = new Bundle();
-        bundle.putString("message", "Counting done...");
-        receiver.send(1234, bundle);
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.v("abc", "Timer has started");
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
-
-        // Service läuft weiter, auch wenn App geschlossen wird.
-        return START_STICKY;
-    }
-
-    @SuppressLint("RestrictedApi")
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        while(intent == null){
-            // TODO Code wie unten... Wie Benachrichtigung ohne intent ( und Receiver...?)
-           /** //Wenn App geschlossen, alle 5 sekunden eine Benachrichtigung.
-             int time = 5;
-
-            for(int i = 0; i< time; i++){
-                Log.v("abc", "(intent null) i = "+i);
-                try{
-                    Thread.sleep(1000);
-                }catch(Exception e){
-
-                }
-            }
-            **/
-        }
-
-        while(true) {
-
-            // TODO Wo Server Socket erstellen? In Intent Service wäre praktisch, wenns geht..
-
-            ResultReceiver receiver = intent.getParcelableExtra("receiver");
-
-            ArrayList<BluetoothDevice> pairedDeviceList = new ArrayList<>();
-            BluetoothAdapter mybluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            Set<BluetoothDevice> bt = mybluetoothAdapter.getBondedDevices();
-
-            if (bt.size() > 0) {
-
-                for (BluetoothDevice device : bt) {
-                    pairedDeviceList.add(device);
-                }
-            }
-
-            for (int i= 0; i<pairedDeviceList.size(); i++)
-            {
-                try {
-                    Log.v("abc", "(intent not null) device = " + pairedDeviceList.get(i).getName());
-                    BluetoothDevice device = pairedDeviceList.get(i);
-                    ClientClass clientClass = new ClientClass(device);
-                    clientClass.start();
-                    Thread.sleep(15000);
-                    Log.v("abc", "(intent not null) state = " + state);
-                    if (state.equals("CONNECTED")){
-                        sendNotification(receiver);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-
-        }
-    }
 
 }
 
