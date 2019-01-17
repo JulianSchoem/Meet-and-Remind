@@ -170,14 +170,13 @@ getAllLabelsInFB = async function() {
  * @returns {{mainTopic: (*|Node), compare: number}}
  */
 iterateLabels = function(contact) {
+    // count occurrence of labels here
+    let counts = {};
 
     // compare stored value
     let compare = 0;
 
     for (let label of contact.labels) {
-
-        // count occurrence of labels here
-        let counts = {};
 
         // if count[labelCount] doesn't exist
         if (counts[label] === undefined) {
@@ -250,6 +249,9 @@ iterateContacts = async function(user, labelInfo) {
 
         // now also iterate the labels of the contact to get both mainTopic values
         let mainTopicContact = iterateLabels(contactLabels);
+
+        console.log(contact.contactID + " COUNTS " + JSON.stringify(mainTopicUser));
+        console.log(contact.contactID + " COUNTS " + JSON.stringify(mainTopicContact));
 
         // check which mainTopic is most used
         if (mainTopicUser.compare > mainTopicContact.compare) {
