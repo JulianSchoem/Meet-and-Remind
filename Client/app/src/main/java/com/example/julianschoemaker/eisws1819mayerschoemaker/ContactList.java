@@ -1,36 +1,19 @@
 package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
-import android.annotation.SuppressLint;
-import android.app.IntentService;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.ResultReceiver;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,26 +26,33 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-
 public class ContactList extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private FloatingActionButton fbtn_AddContact;
 
     private ListView listview_contactList;
-    FrameLayout touch_area_chat;
-    ProgressBar progress;
+    private FrameLayout touch_area_chat;
+    private ProgressBar progress;
 
-
-    //TODO Bei Match Themenvorschlag blaues Icon!
+    //TODO GET REQUEST for Topic Match
+    //TODO If there is a Match, change Icon color to Blue
 
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_contact_list);
 
+        /**
+         * Setup for Client side Application Logic
+         */
+        // Setup Server for Bluetooth Connection
         ServerClass serverClass = new ServerClass();
         serverClass.start();
+        //BluetoothConnectionService
+        Intent serviceIntent = new Intent(this, BluetoothConnectionService.class);
+        startService(serviceIntent);
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbarList);
+
+        Toolbar mToolbar = findViewById(R.id.toolbarList);
         mToolbar.setTitle(getString(R.string.app_name));
         fbtn_AddContact = findViewById(R.id.fab);
         fbtn_AddContact.setOnClickListener(new View.OnClickListener() {
@@ -73,13 +63,20 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
             }
         });
 
-        listview_contactList = (ListView) findViewById(R.id.listview_contactlist);
-
         progress = findViewById(R.id.progressBarContactList);
+        listview_contactList = findViewById(R.id.listview_contactlist);
+        listview_contactList.setOnItemClickListener(ContactList.this);
 
-
+        /**
+         * GET REQUEST
+         * All Contacts, that belongs to 0C:8F:FF:C7:92:2C
+         */
         OkHttpClient client = new OkHttpClient();
 
+        //TODO GET own Bluetooth ID
+        //TODO POST own BTID
+        // User's TO-Do: Add Contact
+        //For Testing Purpose Dummy Data
         String url = "https://eisws1819mayerschoemaker.herokuapp.com/users/0C:8F:FF:C7:92:2C/contacts";
         Request request = new Request.Builder()
                 .url(url)
@@ -104,14 +101,11 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
                                 finish();
                             }
                         });
-
                         final AlertDialog alert = dialog.create();
                         alert.show();
                     }
                 });
-
                 }
-
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if ( response.isSuccessful())
@@ -140,6 +134,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
                         final String array[] = new String[counter];
 
+                        //get Contact Bluetooth Ids
                         try {
                             Iterator<String> keys = jObject.keys();
                             int i = 0;
@@ -152,9 +147,8 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
                                 i++;
                             }
                         } catch (Exception e){
-
+                            e.printStackTrace();
                         }
-
                         ContactList.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -166,18 +160,13 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
             }
         });
 
-        listview_contactList.setOnItemClickListener(ContactList.this);
-
-        //Notify Service
-        Intent serviceIntent = new Intent(this, NotifyService.class);
-        startService(serviceIntent);
-
         }
-
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+        //Touch Area works fine, but not on first "OnItemClick"
+        //TODO Touch Area / OnImageClick works on first "OnItemClick"
         touch_area_chat = view.findViewById(R.id.touch_area_chat);
         touch_area_chat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,12 +175,9 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
                     startActivity(suggestionIntent);
                 }
         });
-
         Intent activityIntent = new Intent(ContactList.this, ContactDetail.class);
         String bluetoothID = listview_contactList.getAdapter().getItem(position).toString();
         activityIntent.putExtra("BTID", bluetoothID);
         startActivity(activityIntent);
     }
-
-
 }

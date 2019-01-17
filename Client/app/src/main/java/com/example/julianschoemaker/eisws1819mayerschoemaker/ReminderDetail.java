@@ -29,13 +29,10 @@ import okhttp3.Response;
 
 public class ReminderDetail extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    Toolbar mToolbar;
-    Button btn_info;
-
-    ListView listview_labelList;
-
-    FloatingActionButton fabCheck;
-    boolean oneIsChecked = false;
+    private Toolbar mToolbar;
+    private Button btn_info;
+    private ListView listview_labelList;
+    private FloatingActionButton fabCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,17 +77,17 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
         fabCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO ERINNERUNG SPEICHERN
+                //TODO save Reminder (POST)
                 onBackPressed();
             }
         });
 
         listview_labelList = findViewById(R.id.listview_labelList);
-
-
         listview_labelList.setOnItemClickListener(ReminderDetail.this);
 
-
+        /**
+         * GET TOPICS
+         */
         OkHttpClient client = new OkHttpClient();
 
         String url = "https://eisws1819mayerschoemaker.herokuapp.com/topics";
@@ -163,26 +160,8 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         ImageView img_check = view.findViewById(R.id.img_check);
-
         img_check.setBackgroundResource(R.drawable.list_activated_background);
 
-        /**
-         ImageView img_check = view.findViewById(R.id.img_check);
-
-        if (img_check.getVisibility() == View.VISIBLE) {
-            if ( oneIsChecked == true) {
-                img_check.setVisibility(View.INVISIBLE);
-                oneIsChecked = false;
-            }
-        } else {
-            if ( oneIsChecked == false) {
-                img_check.setVisibility(View.VISIBLE);
-                oneIsChecked = true;
-            }
-        }**/
-
-        //TODO Label für Themenvorschlag beim Speichern übergeben
-        // TODO BUG: wenn Beschreibung länger, in Liste 2 Häkchen...
-
+        //TODO save Topic and POST to Reminder (needed for Suggestion)
     }
 }

@@ -8,24 +8,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-
-
 public class Suggestion extends AppCompatActivity {
 
-    Toolbar mToolbar;
-    TextView webText;
-    BingWebSearch bing;
-    ProgressBar progress;
-    WebView webView;
-    String searchTerm = "Klima";
+    private Toolbar mToolbar;
+    private BingWebSearch bing;
+    private ProgressBar progress;
+    private WebView webView;
 
+    //TODO GET TOPIC MATCHING FROM HEROKU SERVER
+    private String searchTerm = "Klima";
 
 
     @Override
@@ -33,7 +29,7 @@ public class Suggestion extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestion);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbarSuggestion);
+        mToolbar = findViewById(R.id.toolbarSuggestion);
         mToolbar.setTitle("Themenvorschlag");
         mToolbar.setTitleTextColor(0xFFFFFFFF);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
@@ -43,14 +39,17 @@ public class Suggestion extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        webText = findViewById(R.id.textViewWeb);
 
+        /**
+         * GET BING NEWS API URL
+         */
 
-
+        //arrays for JSON Requests
         final String[] jsonString = new String[1];
         final String[] array = new String[1];
         final String[] url = new String[1];
 
+        //AsyncTask needed, because of long running GET Request and loading WebView
         @SuppressLint("StaticFieldLeak") AsyncTask <Void, Void, Void> task = new AsyncTask <Void, Void, Void> () {
             @Override
             protected void onPreExecute() {
@@ -71,8 +70,6 @@ public class Suggestion extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
                 return null;
             }
 
@@ -83,7 +80,6 @@ public class Suggestion extends AppCompatActivity {
                 webView.getSettings().getJavaScriptEnabled();
                 webView.getSettings().setDomStorageEnabled(true);
                 webView.loadUrl(url[0]);
-                webText.setText(url[0]);
 
                 progress.setVisibility(View.GONE);
             }
