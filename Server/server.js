@@ -1,7 +1,10 @@
-// EISWS1819MayerSchoemaker by Johanna Mayer & Julian Schoemaker
-
-// to push this subtree to heroku: git subtree push --prefix Server heroku master
-// running on https://eisws1819mayerschoemaker.herokuapp.com/
+/**
+ * EISWS1819MayerSchoemaker
+ * by Johanna Mayer & Julian Schoemaker
+ * Server to System "Meet & Remind"
+ * Running on https://eisws1819mayerschoemaker.herokuapp.com/
+ * (to push this subtree to heroku: git subtree push --prefix Server heroku master)
+  */
 
 /*********************************************************************************************************
  * Inits & Modules
@@ -56,7 +59,7 @@ function initServer() {
     });
 
     app.listen(settings.port, function(){
-        console.log("Dienstgeber ist nun auf Port " + settings.port + " verfügbar");
+        console.log("Server ist nun auf Port " + settings.port + " verfügbar");
     });
 
     /**
