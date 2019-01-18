@@ -54,7 +54,6 @@ getContactsFromFb = async function(user) {
                 snapshot.forEach(contact => {
                     let contactTmp = contact.id;
                     user.contacts.push({ contactID : contactTmp});
-
                 });
             })
             .then(function () {
@@ -93,9 +92,7 @@ getLabelsFromFb = async function(user, contact) {
             .then(snapshot => {
                 snapshot.forEach(reminder => {
                     let reminderLabel = reminder.data().label;
-
                     contact.labels.push(reminderLabel);
-
                 });
             })
             .then(function () {
@@ -239,29 +236,29 @@ getMainTopic = function(array) {
  */
 iterateContacts = async function(user, labelInfo) {
     for (let contact of user.contacts) {
-        // save current userID and contactID to use it later for Firebase update
+        // save current userID and contactID to use it later for setting the data into Firebase
         let userID = user.userID;
         let contactID = contact.contactID;
 
         // get the mainTopic of the user itself (later get it from the opposite)
         let mainTopicUser = iterateLabels(contact, undefined);
-        // now we have to labels of the user
+        // array of labels of the user
 
         // find the opposite of the user
         let contactUser = getUserByID(labelInfo, contactID);
-        // now we know which user is the opposite
+        // String ID of the opposite
 
         // get the labels of the opposite
         let contactLabels = getContactByID(contactUser, userID);
-        // noew we now the labels of the opposite user
+        // array with labels of the opposite user
 
         // also iterate the labels of the opposite and add them to the users labels
         let mergedLabels = iterateLabels(contactLabels, mainTopicUser);
-        // now we have labels of both user and opposite
+        // array with labels of both user and opposite
 
         // get most frequent label of both users
         let mainTopic = getMainTopic(mergedLabels);
-        // now we have the string of the most frequent label that is set contact as a property
+        // string of the most frequent label that is set contact as a property
 
         // set the main topic into both user and contact on Firebase
         if (mainTopic) {
@@ -287,7 +284,7 @@ getLabelCount = async function(labelInfo) {
 setMainTopic = async function() {
     // get all labels of reminders that users set to their contacts
     let labelInfo = await getAllLabelsInFB();
-    // now we have multiple user -> their contacts -> chosen labels of reminder
+    // array with all user -> their contacts -> chosen labels of reminder
 
     // count which label is the most used for user and his opposite and set it to Firebase
     await getLabelCount(labelInfo);
