@@ -24,7 +24,6 @@ getUser = async function() {
     let usersCollection = db.collection(USERS);
 
     return new Promise(function(resolve) {
-
         usersCollection.get()
             .then(snapshot => {
                 snapshot.forEach(user => {
@@ -48,7 +47,6 @@ getContactsFromFb = async function(user) {
     let contactCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS);
 
     return new Promise(function(resolve) {
-
         contactCollection.get()
             .then(snapshot => {
                 snapshot.forEach(contact => {
@@ -84,7 +82,6 @@ getContacts = async function(userArray) {
  */
 getLabelsFromFb = async function(user, contact) {
     contact.labels = [];
-
     let reminderCollection = db.collection(USERS).doc(user.userID).collection(CONTACTS).doc(contact.contactID).collection(REMINDER);
 
     return new Promise(function(resolve) {
@@ -154,18 +151,17 @@ getAllLabelsInFB = async function() {
  * @returns {*}
  */
 iterateLabels = function(contact, previousLabels) {
-    // counts will be the array with the counter of the labels
+    // counts will be the array with the counter and the labels
     let counts;
     if (previousLabels !== undefined) {
-        // this case will run if the contact labels are iterated (second run of function)
+        // this case will run if the contact labels are iterated (second (opposite) run of function)
         counts = previousLabels;
     } else {
-        // this case will run if the user labels are iterated (first run of function)
+        // this case will run if the user labels are iterated (first (user) run of function)
         counts = {};
     }
 
     for (let label of contact.labels) {
-
         // if count[labelCount] doesn't exist
         if (counts[label] === undefined) {
             // set count[labelCount] value to 1
@@ -174,7 +170,6 @@ iterateLabels = function(contact, previousLabels) {
             // increment existing label with previous value
             counts[label] = counts[label] + 1;
         }
-
     }
 
     return counts;
@@ -277,6 +272,7 @@ getLabelCount = async function(labelInfo) {
         await iterateContacts(user, labelInfo);
     }
 };
+
 /**
  * Set the main topic of users and contacts into Firebase
  */
@@ -287,7 +283,7 @@ setMainTopic = async function() {
 
     // count which label is the most used for user and his opposite and set it to Firebase
     await getLabelCount(labelInfo);
-    // now the most frequent label of all user and their opposite is set to Firebase
+    // now the most frequent label of all user and their opposite was set to Firebase
 
     console.log('------------------ FINISHED SERVERSEITIGE ANWENDUNGSLOGIK');
 };
