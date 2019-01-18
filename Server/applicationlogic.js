@@ -151,8 +151,10 @@ getAllLabelsInFB = async function() {
 
 /**
  * iterate the labels and count how often they are set
+ * if this is the opposite user we merge them with the previousLabels array
  * @param contact
- * @returns {{mainTopic: (*|Node), compare: number}}
+ * @param previousLabels
+ * @returns {*}
  */
 iterateLabels = function(contact, previousLabels) {
     // counts will be the array with the counter of the labels
@@ -260,7 +262,7 @@ iterateContacts = async function(user, labelInfo) {
         let mainTopic = getMainTopic(mergedLabels);
         // string of the most frequent label that is set contact as a property
 
-        // set the main topic into both user and contact on Firebase
+        // set the main topic into both user and opposite on Firebase
         if (mainTopic) {
             await db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({topic : mainTopic}, {merge: true});
             await db.collection(USERS).doc(contactID).collection(CONTACTS).doc(userID).set({topic : mainTopic}, {merge: true});

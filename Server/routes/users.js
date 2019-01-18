@@ -10,6 +10,12 @@ const db = admin.firestore();
 const express = require('express');
 const router = express.Router(null);
 
+// Init jsonschema for JSON Schema validation
+const Validator = require('jsonschema').Validator;
+const v = new Validator();
+const fs = require("fs");
+const schema = JSON.parse(fs.readFileSync('./json-schema.json','utf8'));
+
 // Init Routes
 const USERS = "users";
 const CONTACTS = "contacts";
@@ -40,12 +46,18 @@ router.get('/:uid', function (req, res) {
 
 /**
  * POST one user
- * Not currently necessary because we create a user when adding first contact
+ * Not currently necessary because we create an user when adding first contact
  */
 router.post('/', function (req, res) {
     // get data out of body and url
     let user = req.body;
     let userID = user.userID;
+
+    // Error handler
+    if(req.body == {}) {
+        res.status(400).send('Missing Body in this POST!');
+        return;
+    }
 
     // safe user into firebase
     db.collection(USERS).doc(userID).set({});
@@ -91,6 +103,12 @@ router.post('/:uid/contacts', function (req, res) {
     let contactID = contact.contactID;
     let userID = req.params.uid;
 
+    // Error handler
+    if(req.body == {}) {
+        res.status(400).send('Missing Body in this POST!');
+        return;
+    }
+
     // safe contact into firebase
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({});
 
@@ -112,6 +130,17 @@ router.post('/:uid/contacts/:cid', function (req, res) {
     let userID = req.params.uid;
     let contactID = req.params.cid;
 
+    // Error handler
+    if(req.body == {}) {
+        res.status(400).send('Missing Body in this POST!');
+        return;
+    }
+
+    if(!req.body.hasOwnProperty('name')){
+        res.status(400).send('Missing Variable in Body of this POST!');
+        return;
+    }
+
     // safe name into firebase
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(name, {merge: true});
 
@@ -132,6 +161,17 @@ router.put('/:uid/contacts/:cid', function (req, res) {
     let name = req.body;
     let userID = req.params.uid;
     let contactID = req.params.cid;
+
+    // Error handler
+    if(req.body == {}) {
+        res.status(400).send('Missing Body in this PUT!');
+        return;
+    }
+
+    if(!req.body.hasOwnProperty('name')){
+        res.status(400).send('Missing Variable in Body of this PUT!');
+        return;
+    }
 
     // safe name into firebase
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).update(name);
@@ -183,6 +223,29 @@ router.post('/:uid/contacts/:cid/reminder', function (req, res) {
     let contactID = req.params.cid;
     let reminderID = getCollectionId(USERS + '/' + userID + '/' + CONTACTS + '/' + contactID  + '/' + REMINDER);
 
+    // Error handler
+    if(req.body == {}) {
+        res.status(400).send('Missing Body in this POST!');
+        return;
+    }
+
+    if(!req.body.hasOwnProperty('title')){
+        res.status(400).send('Missing Variable in Body of this POST!');
+        return;
+    }
+
+    if(!req.body.hasOwnProperty('description')){
+        res.status(400).send('Missing Variable in Body of this POST!');
+        return;
+    }
+
+    // JSON Schema Validation - start
+    if ( v.validate(req.body, schema).errors.length > 0 ) {
+        res.status(400).send("JSON Schema Validation failed on reminder POST");
+        return;
+    }
+    // JSON Schema Validation - end
+
     // safe reminder into firebase
     db.collection(USERS).doc(userID)
         .collection(CONTACTS).doc(contactID)
@@ -207,6 +270,22 @@ router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
     let userID = req.params.uid;
     let contactID = req.params.cid;
     let reminderID = req.params.rid;
+
+    // Error handler
+    if(req.body == {}) {
+        res.status(400).send('Missing Body in this PUT!');
+        return;
+    }
+
+    if(!req.body.hasOwnProperty('title')){
+        res.status(400).send('Missing Variable in Body of this PUT!');
+        return;
+    }
+
+    if(!req.body.hasOwnProperty('description')){
+        res.status(400).send('Missing Variable in Body of this PUT!');
+        return;
+    }
 
     // safe reminder into firebase
     db.collection(USERS).doc(userID)
