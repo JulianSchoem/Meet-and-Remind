@@ -72,19 +72,21 @@ function initServer() {
      * .scheduleJob("<second> <minute> <hour> <day of month> <month> <day of week>"
      */
 
+    /**
     schedule.scheduleJob("30 * * * * *", function() {
         // main function for Server Applicationlogic
         console.log("------------------ CRONJOB RUNNING");
         applicationlogic.setMainTopic();
         console.log("------------------ FINISHED CRONJOB");
     });
+    */
 
     /**
      * WITHOUT Cronjob for the Server Applicationlogic
      * for debugging and presentation of the Applicationlogic
      * would run every day on something like 23:59 with cron job in production
      */
-    //applicationlogic.setMainTopic();
+    applicationlogic.setMainTopic();
 
 }
 
