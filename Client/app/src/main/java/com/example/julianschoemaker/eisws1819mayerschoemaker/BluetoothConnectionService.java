@@ -32,11 +32,13 @@ import static com.example.julianschoemaker.eisws1819mayerschoemaker.BluetoothCon
 import static com.example.julianschoemaker.eisws1819mayerschoemaker.BluetoothConnectionService.STATE_CONNECTING;
 import static com.example.julianschoemaker.eisws1819mayerschoemaker.BluetoothConnectionService.STATE_CONNECTION_FAILED;
 
+/**
+ * Intent Service for Background Thread and handling asynchronous requests
+ */
 public class BluetoothConnectionService extends IntentService {
 
     public static final String APP_NAME = "Meet And Remind";
-    public static final UUID MY_UUID_INSECURE =
-            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+    public static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     public static final int STATE_NONE = 0; // we're doing nothing
     public static final int STATE_LISTENING = 1; // now listening for incoming connections

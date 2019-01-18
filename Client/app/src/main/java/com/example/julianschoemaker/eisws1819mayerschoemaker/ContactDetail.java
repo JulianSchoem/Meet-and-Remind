@@ -10,10 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,24 +27,18 @@ import okhttp3.Response;
 
 public class ContactDetail extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-
     private FloatingActionButton fbtn_AddReminder;
-
     private ListView listview_reminderList;
-
-    ImageView img_delete;
-    FrameLayout fl_touch_area;
-    ProgressBar progress;
-
-    Toolbar mToolbar;
+    private FrameLayout fl_touch_area;
+    private ProgressBar progress;
+    private Toolbar mToolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_detail);
 
-
-        mToolbar = (Toolbar) findViewById(R.id.toolbarDetailC);
+        mToolbar = findViewById(R.id.toolbarDetailC);
         String blueID = getIntent().getExtras().getString("BTID");
         mToolbar.setTitle(blueID);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);

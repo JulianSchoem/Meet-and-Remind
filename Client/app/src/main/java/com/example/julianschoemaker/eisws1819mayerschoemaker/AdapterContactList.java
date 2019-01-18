@@ -1,13 +1,15 @@
 package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
 import android.content.Context;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+/**
+ * Contact List Adapter for Listviews of Contacts with attribute "name"
+ */
 class AdapterContactList extends BaseAdapter {
 
     Context context;

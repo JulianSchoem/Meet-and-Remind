@@ -7,18 +7,22 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+/**
+ * Reminder List Adapter for Listviews of Reminders with attributes "title" and "description"
+ */
+
 class AdapterReminderList extends BaseAdapter {
 
     Context context;
-    String[] data;
-    String[] dataReminder;
+    String[] title;
+    String[] description;
     private static LayoutInflater inflater = null;
 
-    public AdapterReminderList(Context context, String[] dataName, String[] dataReminder) {
+    public AdapterReminderList(Context context, String[] titleName, String[] description) {
         // Auto-generated constructor stub
         this.context = context;
-        this.data = dataName;
-        this.dataReminder = dataReminder;
+        this.title = titleName;
+        this.description = description;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -26,13 +30,13 @@ class AdapterReminderList extends BaseAdapter {
     @Override
     public int getCount() {
         // Auto-generated method stub
-        return data.length;
+        return title.length;
     }
 
     @Override
     public Object getItem(int position) {
         // Auto-generated method stub
-        return data[position];
+        return title[position];
     }
 
     @Override
@@ -47,10 +51,10 @@ class AdapterReminderList extends BaseAdapter {
         View vi = convertView;
         if (vi == null)
             vi = inflater.inflate(R.layout.remind_item, null);
-        TextView txt_contactName = (TextView) vi.findViewById(R.id.txt_contactName);
+        TextView txt_contactName = vi.findViewById(R.id.txt_contactName);
         TextView txt_contactReminder = vi.findViewById(R.id.txt_contactReminder);
-        txt_contactName.setText(data[position]);
-        txt_contactReminder.setText(dataReminder[position]);
+        txt_contactName.setText(title[position]);
+        txt_contactReminder.setText(description[position]);
         return vi;
     }
 }

@@ -27,7 +27,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ReminderDetail extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class ReminderDetail extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private Button btn_info;
@@ -40,7 +40,12 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
         setContentView(R.layout.activity_reminder_detail);
 
         mToolbar = findViewById(R.id.toolbarDetailR);
-        mToolbar.setTitle("Erinnerung bearbeiten");
+        String neu = getIntent().getExtras().getString("ERSTELLEN");
+        if (neu != null){
+            mToolbar.setTitle(neu);
+        }
+        else mToolbar.setTitle("Erinnerung bearbeiten");
+
         mToolbar.setTitleTextColor(0xFFFFFFFF);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -50,6 +55,9 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
             }
         });
 
+        /**
+         * On Click Listeners
+         */
         btn_info = findViewById(R.id.btn_info);
         btn_info.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,8 +68,8 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
                 dialog.setMessage("Du kannst Erinnerungen ein Thema zuweisen. " +
                         "Mit diesen Themen kann dir das System Themenvorschläge liefern, " +
                         "die dir im Gespräch weiterhelfen können. " +
-                        "Der Themenvorschlag erscheint als blaues Symbol bei der Kontaktliste" );
-                dialog.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                        "Der Themenvorschlag erscheint als blaues Symbol bei der Kontaktliste." );
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         //Action for "cancel".
@@ -83,7 +91,15 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
         });
 
         listview_labelList = findViewById(R.id.listview_labelList);
-        listview_labelList.setOnItemClickListener(ReminderDetail.this);
+        listview_labelList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ImageView img_check = view.findViewById(R.id.img_check);
+                img_check.setBackgroundResource(R.drawable.list_activated_background);
+
+                //TODO save Topic and POST to Reminder (needed for Suggestion)
+                }
+        });
 
         /**
          * GET TOPICS
@@ -153,15 +169,6 @@ public class ReminderDetail extends AppCompatActivity implements AdapterView.OnI
                 }
             }
         });
-
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        ImageView img_check = view.findViewById(R.id.img_check);
-        img_check.setBackgroundResource(R.drawable.list_activated_background);
-
-        //TODO save Topic and POST to Reminder (needed for Suggestion)
-    }
 }
