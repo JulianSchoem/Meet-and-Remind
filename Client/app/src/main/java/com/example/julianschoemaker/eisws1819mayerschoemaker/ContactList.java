@@ -26,7 +26,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ContactList extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class ContactList extends AppCompatActivity {
 
     private FloatingActionButton fbtn_AddContact;
 
@@ -51,7 +51,6 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         Intent serviceIntent = new Intent(this, BluetoothConnectionService.class);
         startService(serviceIntent);
 
-
         Toolbar mToolbar = findViewById(R.id.toolbarList);
         mToolbar.setTitle(getString(R.string.app_name));
         fbtn_AddContact = findViewById(R.id.fab);
@@ -65,7 +64,25 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
         progress = findViewById(R.id.progressBarContactList);
         listview_contactList = findViewById(R.id.listview_contactlist);
-        listview_contactList.setOnItemClickListener(ContactList.this);
+        listview_contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Touch Area works fine, but not on first "OnItemClick"
+                //TODO Touch Area / OnImageClick works on first "OnItemClick"
+                touch_area_chat = view.findViewById(R.id.touch_area_chat);
+                touch_area_chat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent suggestionIntent = new Intent(ContactList.this, Suggestion.class);
+                        startActivity(suggestionIntent);
+                    }
+                });
+                Intent activityIntent = new Intent(ContactList.this, ContactDetail.class);
+                String bluetoothID = listview_contactList.getAdapter().getItem(position).toString();
+                activityIntent.putExtra("BTID", bluetoothID);
+                startActivity(activityIntent);
+                }
+        });
 
         /**
          * GET REQUEST
@@ -159,25 +176,5 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
                 }
             }
         });
-
-        }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        //Touch Area works fine, but not on first "OnItemClick"
-        //TODO Touch Area / OnImageClick works on first "OnItemClick"
-        touch_area_chat = view.findViewById(R.id.touch_area_chat);
-        touch_area_chat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    Intent suggestionIntent = new Intent(ContactList.this, Suggestion.class);
-                    startActivity(suggestionIntent);
-                }
-        });
-        Intent activityIntent = new Intent(ContactList.this, ContactDetail.class);
-        String bluetoothID = listview_contactList.getAdapter().getItem(position).toString();
-        activityIntent.putExtra("BTID", bluetoothID);
-        startActivity(activityIntent);
     }
 }

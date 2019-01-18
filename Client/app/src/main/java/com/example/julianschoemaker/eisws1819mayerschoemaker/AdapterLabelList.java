@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * Label List Adapter for Listviews of Topics with attributes "name" and ImageView "check"
+ */
 public class AdapterLabelList extends BaseAdapter {
 
     Context context;
@@ -48,16 +50,12 @@ public class AdapterLabelList extends BaseAdapter {
         View vi = convertView;
         if (vi == null)
             vi = inflater.inflate(R.layout.label_item, null);
-
         if (position % 2 == 1) {
-
             vi.setBackgroundColor(Color.WHITE);
         } else {
             vi.setBackgroundResource(R.color.colorListGrey);
         }
-
-
-        TextView txt_labelName = (TextView) vi.findViewById(R.id.txt_labelName);
+        TextView txt_labelName = vi.findViewById(R.id.txt_labelName);
         txt_labelName.setText(data[position]);
 
         return vi;

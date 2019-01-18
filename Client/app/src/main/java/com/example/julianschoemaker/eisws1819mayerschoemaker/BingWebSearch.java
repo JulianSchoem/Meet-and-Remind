@@ -15,6 +15,9 @@ import java.util.Scanner;
 
 import javax.net.ssl.HttpsURLConnection;
 
+/**
+ * https://docs.microsoft.com/en-us/azure/cognitive-services/bing-news-search/java
+ */
 public class BingWebSearch {
 
     static String subscriptionKey = "781d2e7c0a2843c8ad3426b17eedf47b";
@@ -23,28 +26,22 @@ public class BingWebSearch {
 
 
     public String getJson(String searchTerm){
-
         if (subscriptionKey.length() != 32) {
             System.out.println("Invalid Bing Search API subscription key!");
             System.out.println("Please paste yours into the source code.");
             System.exit(1);
             return "Error1";
-
         }
-
         // Call the SearchWeb method and print the response.
         try {
             SearchResults result = SearchWeb(searchTerm);
             String json = prettify(result.jsonResponse);
             System.out.println(json);
             return json;
-
-
         }
         catch (Exception e) {
             e.printStackTrace(System.out);
             return "Error2";
-
         }
     }
 
