@@ -63,7 +63,7 @@ router.post('/', function (req, res) {
     db.collection(USERS).doc(userID).set({});
 
     // generate URI
-    let userURI = req.protocol + '://' + req.get('host') + req.originalUrl + '/' + userID;
+    let contactURI = req.protocol + '://' + req.get('host') + "/users/" + userID;
 
     // set URI and finish POST
     res.set('location', userURI);
@@ -113,7 +113,7 @@ router.post('/:uid/contacts', function (req, res) {
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({});
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID;
+    let contactURI = req.protocol + '://' + req.get('host') + "/users/" + userID +  '/contacts/' + contactID;
 
     // set URI and finish POST
     res.set('location', contactURI);
@@ -145,7 +145,7 @@ router.post('/:uid/contacts/:cid', function (req, res) {
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(name, {merge: true});
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID;
+    let contactURI = req.protocol + '://' + req.get('host') + "/users/" + userID +  '/contacts/' + contactID;
 
     // set URI and finish POST
     res.set('location', contactURI);
@@ -177,7 +177,7 @@ router.put('/:uid/contacts/:cid', function (req, res) {
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).update(name);
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID;
+    let contactURI = req.protocol + '://' + req.get('host') + "/users/" + userID +  '/contacts/' + contactID;
 
     // set URI and finish POST
     res.set('location', contactURI);
@@ -252,7 +252,7 @@ router.post('/:uid/contacts/:cid/reminder', function (req, res) {
         .collection(REMINDER).doc(reminderID).set(reminder);
 
     // generate URI
-    let reminderURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID + '/reminder/' + reminderID ;
+    let reminderURI = req.protocol + '://' + req.get('host') + "/users/" + userID +  '/contacts/' + contactID + '/reminder/' + reminderID ;
 
     // set URI and finish POST
     res.set('location', reminderURI);
@@ -293,7 +293,7 @@ router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
         .collection(REMINDER).doc(reminderID).update(reminder);
 
     // generate URI
-    let reminderURI = req.protocol + '://' + req.get('host') + '/contacts/' + contactID + '/reminder/' + reminderID ;
+    let reminderURI = req.protocol + '://' + req.get('host') + "/users/" + userID +  '/contacts/' + contactID + '/reminder/' + reminderID ;
 
     // set URI and finish POST
     res.set('location', reminderURI);
