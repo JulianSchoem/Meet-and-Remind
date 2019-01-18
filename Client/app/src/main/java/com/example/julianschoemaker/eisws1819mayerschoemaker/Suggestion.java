@@ -21,7 +21,7 @@ public class Suggestion extends AppCompatActivity {
     private WebView webView;
 
     //TODO GET TOPIC MATCHING FROM HEROKU SERVER
-    private String searchTerm = "Klima";
+    private String searchTerm = ContactList.matchedTopic;
 
 
     @Override

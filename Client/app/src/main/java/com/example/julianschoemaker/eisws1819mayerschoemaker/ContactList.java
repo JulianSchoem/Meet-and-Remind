@@ -34,6 +34,8 @@ public class ContactList extends AppCompatActivity {
     private FrameLayout touch_area_chat;
     private ProgressBar progress;
 
+    public static String matchedTopic;
+
     //TODO GET REQUEST for Topic Match
     //TODO If there is a Match, change Icon color to Blue
 
@@ -173,6 +175,44 @@ public class ContactList extends AppCompatActivity {
                                 listview_contactList.setAdapter(new AdapterContactList(getApplicationContext(), array));
                             }
                         });
+                }
+            }
+        });
+
+        /**
+         * GET REQUEST
+         * Matched topic that belogs to 0C:8F:FF:C7:92:2C and 54:27:58:24:B2:7F
+         */
+        OkHttpClient client2 = new OkHttpClient();
+
+        //TODO GET own Bluetooth ID
+        //TODO POST own BTID
+        // User's TO-Do: Add Contact
+        //For Testing Purpose Dummy Data
+        String url2 = "https://eisws1819mayerschoemaker.herokuapp.com/users/0C:8F:FF:C7:92:2C/contacts/54:27:58:24:B2:7F";
+        Request request2 = new Request.Builder()
+                .url(url2)
+                .build();
+        client.newCall(request2).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+
+                }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if ( response.isSuccessful())
+                {
+                    final String jsonData = response.body().string();
+                    JSONObject jObject = null;
+                    try {
+                        jObject = new JSONObject(jsonData);
+                        matchedTopic = jObject.getString("topic");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });
