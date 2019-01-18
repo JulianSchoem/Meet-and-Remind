@@ -2,6 +2,7 @@ package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
 import android.content.DialogInterface;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 
@@ -12,8 +13,11 @@ import android.view.View;
 
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,8 +27,11 @@ import java.util.Iterator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ReminderDetail extends AppCompatActivity {
@@ -32,7 +39,11 @@ public class ReminderDetail extends AppCompatActivity {
     private Toolbar mToolbar;
     private Button btn_info;
     private ListView listview_labelList;
+    private EditText editTextTitle;
+    private EditText editTextDescription;
     private FloatingActionButton fabCheck;
+
+    String labelText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +97,63 @@ public class ReminderDetail extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO save Reminder (POST)
+                editTextTitle = findViewById(R.id.editTextTitle);
+                editTextDescription = findViewById(R.id.editTextDescription);
+                String title = editTextTitle.getText().toString();
+                String desc = editTextDescription.getText().toString();
+
+                // create your json here
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("title", title);
+                    jsonObject.put("description", desc);
+                    jsonObject.put("label", labelText);
+                    jsonObject.put("priority", 1);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                OkHttpClient client = new OkHttpClient();
+
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                // put your json here
+                RequestBody body = RequestBody.create(JSON, jsonObject.toString());
+
+                Request request = new Request.Builder()
+                        .url("https://eisws1819mayerschoemaker.herokuapp.com/users/0C:8F:FF:C7:92:2C/contacts/54:27:58:24:B2:7F/reminder")
+                        .post(body)
+                        .build();
+
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        final String yourResponse = response.body().string();
+                        if(response.isSuccessful()){
+
+                            ReminderDetail.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(ReminderDetail.this, "Ok: "+yourResponse,Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }else{
+                            ReminderDetail.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(ReminderDetail.this, "Not Ok: "+yourResponse,Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+
+                    }
+                });
+
                 onBackPressed();
             }
         });
@@ -96,6 +164,8 @@ public class ReminderDetail extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ImageView img_check = view.findViewById(R.id.img_check);
                 img_check.setBackgroundResource(R.drawable.list_activated_background);
+                TextView labelName = view.findViewById(R.id.txt_labelName);
+                labelText = labelName.getText().toString();
 
                 //TODO save Topic and POST to Reminder (needed for Suggestion)
                 }
@@ -170,5 +240,4 @@ public class ReminderDetail extends AppCompatActivity {
             }
         });
     }
-
 }
