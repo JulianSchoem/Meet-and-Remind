@@ -146,9 +146,6 @@ getAllLabelsInFB = async function() {
     return resultWithLabels;
 };
 
-// TODO: die functionen mit await mit try catch umschließen
-// TODO: beim ersten durchlaufen user -> contact ein flag(field) bei beiden setzen, dass sie bereits gehandled wurden
-
 /**
  * iterate the labels and count how often they are set
  * if this is the opposite user we merge them with the previousLabels array
