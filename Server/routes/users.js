@@ -137,7 +137,7 @@ router.post('/:uid/contacts/:cid', function (req, res) {
     }
 
     if(!req.body.hasOwnProperty('name')){
-        res.status(400).send('Missing Variable in Body of this POST!');
+        res.status(400).send('Missing Variable "name" in Body of this POST!');
         return;
     }
 
@@ -169,7 +169,7 @@ router.put('/:uid/contacts/:cid', function (req, res) {
     }
 
     if(!req.body.hasOwnProperty('name')){
-        res.status(400).send('Missing Variable in Body of this PUT!');
+        res.status(400).send('Missing Variable "name" in Body of this PUT!');
         return;
     }
 
@@ -230,12 +230,12 @@ router.post('/:uid/contacts/:cid/reminder', function (req, res) {
     }
 
     if(!req.body.hasOwnProperty('title')){
-        res.status(400).send('Missing Variable in Body of this POST!');
+        res.status(400).send('Missing Variable "title" in Body of this POST!');
         return;
     }
 
     if(!req.body.hasOwnProperty('description')){
-        res.status(400).send('Missing Variable in Body of this POST!');
+        res.status(400).send('Missing Variable "description" in Body of this POST!');
         return;
     }
 
