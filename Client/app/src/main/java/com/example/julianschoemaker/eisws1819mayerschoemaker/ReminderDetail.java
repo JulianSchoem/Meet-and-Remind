@@ -66,6 +66,17 @@ public class ReminderDetail extends AppCompatActivity {
             }
         });
 
+        editTextTitle = findViewById(R.id.editTextTitle);
+        editTextDescription = findViewById(R.id.editTextDescription);
+        String editTextTitleText = getIntent().getExtras().getString("RNAME");
+        String editTextDescriptionText = getIntent().getExtras().getString("DESC");
+        if ( editTextTitleText != null){
+            editTextTitle.setText(editTextTitleText);
+        }
+        if ( editTextDescriptionText != null){
+            editTextDescription.setText(editTextDescriptionText);
+        }
+
         /**
          * On Click Listeners
          */
@@ -96,9 +107,11 @@ public class ReminderDetail extends AppCompatActivity {
         fabCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO save Reminder (POST)
-                editTextTitle = findViewById(R.id.editTextTitle);
-                editTextDescription = findViewById(R.id.editTextDescription);
+
+                /**
+                 * POST Reminder
+                 */
+
                 String title = editTextTitle.getText().toString();
                 String desc = editTextDescription.getText().toString();
 

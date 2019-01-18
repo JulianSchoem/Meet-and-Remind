@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -162,14 +163,14 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
                  dialog.setTitle("Erinnerung löschen?");
                  dialog.setMessage("Bist du Dir sicher, dass Du die Erinnerung endgültig löschen möchtest? " +
                  "Du wirst keine Benachrichtigung mehr zu dieser Erinnerung erhalten. " );
-                 dialog.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                 dialog.setPositiveButton("Abbrechen", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
-                //Action for "cancel".
+                    //Action for "cancel".
                 }
 
                 })
-                 .setNegativeButton("Delete ", new DialogInterface.OnClickListener() {
+                 .setNegativeButton("Löschen ", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //TODO Action for "Delete".
@@ -184,6 +185,9 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
         Intent activityIntent = new Intent(ContactDetail.this, ReminderDetail.class);
         String reminderName = listview_reminderList.getAdapter().getItem(position).toString();
         activityIntent.putExtra("RNAME", reminderName);
+        TextView description = view.findViewById(R.id.txt_contactReminder);
+        String reminderDesc = description.getText().toString();
+        activityIntent.putExtra("DESC", reminderDesc);
         startActivity(activityIntent);
     }
 }

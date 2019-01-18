@@ -20,7 +20,7 @@ public class Suggestion extends AppCompatActivity {
     private ProgressBar progress;
     private WebView webView;
 
-    //TODO GET TOPIC MATCHING FROM HEROKU SERVER
+    //GET Topic Match from Heroku Server
     private String searchTerm = ContactList.matchedTopic;
 
 

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -53,8 +52,6 @@ public class ContactList extends AppCompatActivity {
         Intent serviceIntent = new Intent(this, BluetoothConnectionService.class);
         startService(serviceIntent);
 
-        Toolbar mToolbar = findViewById(R.id.toolbarList);
-        mToolbar.setTitle(getString(R.string.app_name));
         fbtn_AddContact = findViewById(R.id.fab);
         fbtn_AddContact.setOnClickListener(new View.OnClickListener() {
             @Override
