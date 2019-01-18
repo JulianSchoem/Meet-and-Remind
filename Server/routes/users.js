@@ -3,7 +3,7 @@
  *********************************************************************************************************/
 
 // Init Firestore/Firebase
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 const db = admin.firestore();
 
 // Init Express
@@ -13,13 +13,13 @@ const router = express.Router(null);
 // Init jsonschema for JSON Schema validation
 const Validator = require('jsonschema').Validator;
 const v = new Validator();
-const fs = require("fs");
+const fs = require('fs');
 const schema = JSON.parse(fs.readFileSync('./json-schema.json','utf8'));
 
 // Init Routes
-const USERS = "users";
-const CONTACTS = "contacts";
-const REMINDER = "reminder";
+const USERS = 'users';
+const CONTACTS = 'contacts';
+const REMINDER = 'reminder';
 
 /*********************************************************************************************************
  * REST Methodes
@@ -63,7 +63,7 @@ router.post('/', function (req, res) {
     db.collection(USERS).doc(userID).set({});
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + "/users/" + userID;
+    let contactURI = req.protocol + '://' + req.get('host') + '/users/' + userID;
 
     // set URI and finish POST
     res.set('location', userURI);
@@ -113,7 +113,7 @@ router.post('/:uid/contacts', function (req, res) {
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set({});
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + "/users/" + userID +  '/contacts/' + contactID;
+    let contactURI = req.protocol + '://' + req.get('host') + '/users/' + userID +  '/contacts/' + contactID;
 
     // set URI and finish POST
     res.set('location', contactURI);
@@ -145,7 +145,7 @@ router.post('/:uid/contacts/:cid', function (req, res) {
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).set(name, {merge: true});
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + "/users/" + userID +  '/contacts/' + contactID;
+    let contactURI = req.protocol + '://' + req.get('host') + '/users/' + userID +  '/contacts/' + contactID;
 
     // set URI and finish POST
     res.set('location', contactURI);
@@ -177,7 +177,7 @@ router.put('/:uid/contacts/:cid', function (req, res) {
     db.collection(USERS).doc(userID).collection(CONTACTS).doc(contactID).update(name);
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + "/users/" + userID +  '/contacts/' + contactID;
+    let contactURI = req.protocol + '://' + req.get('host') + '/users/' + userID +  '/contacts/' + contactID;
 
     // set URI and finish POST
     res.set('location', contactURI);
@@ -241,7 +241,7 @@ router.post('/:uid/contacts/:cid/reminder', function (req, res) {
 
     // JSON Schema Validation - start
     if ( v.validate(req.body, schema).errors.length > 0 ) {
-        res.status(400).send("JSON Schema Validation failed on reminder POST");
+        res.status(400).send('JSON Schema Validation failed on reminder POST');
         return;
     }
     // JSON Schema Validation - end
@@ -252,7 +252,7 @@ router.post('/:uid/contacts/:cid/reminder', function (req, res) {
         .collection(REMINDER).doc(reminderID).set(reminder);
 
     // generate URI
-    let reminderURI = req.protocol + '://' + req.get('host') + "/users/" + userID +  '/contacts/' + contactID + '/reminder/' + reminderID ;
+    let reminderURI = req.protocol + '://' + req.get('host') + '/users/' + userID +  '/contacts/' + contactID + '/reminder/' + reminderID ;
 
     // set URI and finish POST
     res.set('location', reminderURI);
@@ -293,7 +293,7 @@ router.put('/:uid/contacts/:cid/reminder/:rid', function (req, res) {
         .collection(REMINDER).doc(reminderID).update(reminder);
 
     // generate URI
-    let reminderURI = req.protocol + '://' + req.get('host') + "/users/" + userID +  '/contacts/' + contactID + '/reminder/' + reminderID ;
+    let reminderURI = req.protocol + '://' + req.get('host') + '/users/' + userID +  '/contacts/' + contactID + '/reminder/' + reminderID ;
 
     // set URI and finish POST
     res.set('location', reminderURI);

@@ -3,7 +3,7 @@
  *********************************************************************************************************/
 
 // Init Firestore/Firebase
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 const db = admin.firestore();
 
 // Init Express
@@ -11,7 +11,7 @@ const express = require('express');
 const router = express.Router(null);
 
 // Init Routes
-const TOPICS = "topics";
+const TOPICS = 'topics';
 
 /*********************************************************************************************************
  * REST Methodes

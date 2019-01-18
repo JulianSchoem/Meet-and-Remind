@@ -3,13 +3,13 @@
  *********************************************************************************************************/
 
 // Init Firestore/Firebase
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 const db = admin.firestore();
 
 // Init Routes
-const USERS = "users";
-const CONTACTS = "contacts";
-const REMINDER = "reminder";
+const USERS = 'users';
+const CONTACTS = 'contacts';
+const REMINDER = 'reminder';
 
 /*********************************************************************************************************
  * Server Application Logic
@@ -289,7 +289,7 @@ setMainTopic = async function() {
     await getLabelCount(labelInfo);
     // now the most frequent label of all user and their opposite is set to Firebase
 
-    console.log("------------------ FINISHED SERVERSEITIGE ANWENDUNGSLOGIK");
+    console.log('------------------ FINISHED SERVERSEITIGE ANWENDUNGSLOGIK');
 };
 
 // export function for server.js

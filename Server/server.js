@@ -13,11 +13,11 @@
 
 // Init Firestore/Firebase
 // TODO Firebase Key has to be deleted before making this Repo public
-const admin = require("firebase-admin");
-const serviceAccount = require("./eisws1819mayerschoemaker-firebase.json");
+const admin = require('firebase-admin');
+const serviceAccount = require('./eisws1819mayerschoemaker-firebase.json');
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://eisws1819mayerschoemaker.firebaseio.com"
+    databaseURL: 'https://eisws1819mayerschoemaker.firebaseio.com'
 });
 const db = admin.firestore();
 
@@ -62,7 +62,7 @@ function initServer() {
     });
 
     app.listen(settings.port, function(){
-        console.log("Server ist nun auf Port " + settings.port + " verfügbar");
+        console.log('Server ist nun auf Port ' + settings.port + ' verfügbar');
     });
 
     /**
@@ -75,9 +75,9 @@ function initServer() {
     /**
     schedule.scheduleJob("30 * * * * *", function() {
         // main function for Server Applicationlogic
-        console.log("------------------ CRONJOB RUNNING");
+        console.log('------------------ CRONJOB RUNNING');
         applicationlogic.setMainTopic();
-        console.log("------------------ FINISHED CRONJOB");
+        console.log('------------------ FINISHED CRONJOB');
     });
     */
 
