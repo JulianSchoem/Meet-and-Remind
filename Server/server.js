@@ -34,7 +34,7 @@ const usersRoute = require('./routes/users');
 const topicsRoute = require('./routes/topics');
 
 // Init cron-job module for Server Applicationlogic
-const schedule = require('node-schedule');
+var schedule = require('node-schedule');
 
 // Init Server Applicationlogic
 const applicationlogic = require('./applicationlogic');
@@ -67,26 +67,24 @@ function initServer() {
 
     /**
      * WITH Cronjob for the Server Applicationlogic
-     * Run it every minute
      * dont want to use it on Heroku because of the frequency we would have Heroku app online
      * would run every day on something like 23:59 with cron job in production
+     * .scheduleJob("<second> <minute> <hour> <day of month> <month> <day of week>"
      */
 
-    /**
-    schedule.scheduleJob("* /1 * * * *", function() {
+    schedule.scheduleJob("30 * * * * *", function() {
         // main function for Server Applicationlogic
-        console.log("TEST SCHEDULE");
+        console.log("------------------ CRONJOB RUNNING");
         applicationlogic.setMainTopic();
         console.log("------------------ FINISHED CRONJOB");
     });
-    **/
 
     /**
      * WITHOUT Cronjob for the Server Applicationlogic
      * for debugging and presentation of the Applicationlogic
      * would run every day on something like 23:59 with cron job in production
      */
-    applicationlogic.setMainTopic();
+    //applicationlogic.setMainTopic();
 
 }
 
