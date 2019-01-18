@@ -1,0 +1,42 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "JSON Schema for reminders",
+  "required": [
+    "title",
+    "description"
+  ],
+  "properties": {
+    "title": {
+      "$id": "#/properties/title",
+      "type": "string",
+      "title": "The title schema",
+      "default": "",
+      "examples": [
+        false
+      ],
+      "pattern": "^(.*)$"
+    },
+    "description": {
+      "$id": "#/properties/description",
+      "type": "string",
+      "title": "The description Schema",
+      "default": "",
+      "examples": [
+        false
+      ],
+      "pattern": "^(.*)$"
+    },
+    "label": {
+      "$id": "#/properties/label",
+      "type": "string",
+      "title": "The label Schema",
+      "default": "",
+      "examples": [
+        false
+      ],
+      "pattern": "^(.*)$"
+    }
+  }
+}

@@ -1,10 +1,8 @@
-// EISWS1819MayerSchoemaker - Server with node.js
-
 /*********************************************************************************************************
  * Inits & Modules
  *********************************************************************************************************/
 
-// Init Firestore
+// Init Firestore/Firebase
 const admin = require("firebase-admin");
 const db = admin.firestore();
 
@@ -30,7 +28,6 @@ router.get('/', function (req, res) {
     getCollection(TOPICS).then(result => res.json(result))
 });
 
-
 /*********************************************************************************************************
  * Helper Functions
  * Implemented to avoid redundancy
@@ -55,5 +52,5 @@ getCollection =  function(col) {
     });
 };
 
-//Export as Module
+// export function for server.js
 module.exports = router;

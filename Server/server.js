@@ -1,13 +1,17 @@
-// EISWS1819MayerSchoemaker by Johanna Mayer & Julian Schoemaker
-
-// to push this subtree to heroku: git subtree push --prefix Server heroku master
-// running on https://eisws1819mayerschoemaker.herokuapp.com/
+/**
+ * EISWS1819MayerSchoemaker
+ * by Johanna Mayer & Julian Schoemaker
+ * Server to System "Meet & Remind"
+ *
+ * Running on https://eisws1819mayerschoemaker.herokuapp.com/
+ * (to push this subtree to heroku: git subtree push --prefix Server heroku master)
+  */
 
 /*********************************************************************************************************
  * Inits & Modules
  *********************************************************************************************************/
 
-// Init Firestore
+// Init Firestore/Firebase
 // TODO Firebase Key has to be deleted before making this Repo public
 const admin = require("firebase-admin");
 const serviceAccount = require("./eisws1819mayerschoemaker-firebase.json");
@@ -30,7 +34,7 @@ const usersRoute = require('./routes/users');
 const topicsRoute = require('./routes/topics');
 
 // Init cron-job module for Server Applicationlogic
-const schedule = require('node-schedule');
+var schedule = require('node-schedule');
 
 // Init Server Applicationlogic
 const applicationlogic = require('./applicationlogic');
@@ -51,29 +55,36 @@ function initServer() {
     app.get('/', function (req, res) {
         res.send('<h1>Entwicklungsprojekt interaktive Systeme</h1>\n' +
             '<h2>Wintersemester 2018/2019 an der TH Köln</h2>\n' +
-            '<h3>Meet & Remind - Johanna Mayer und Julian Schoemaker</h3>'
+            '<h3>Meet & Remind - Johanna Mayer und Julian Schoemaker</h3>' +
+            '<a href="/users">List of users in Meet & Remind</a><br>' +
+            '<a href="/topics">List of Topics that are available for reminders in Meet & Remind</a>'
         );
     });
 
     app.listen(settings.port, function(){
-        console.log("Dienstgeber ist nun auf Port " + settings.port + " verfügbar");
+        console.log("Server ist nun auf Port " + settings.port + " verfügbar");
     });
 
     /**
-     * Cronjob for the Server Applicationlogic
-     * Run it every minute (just for debugging and presentation of the Applicationlogic)
+     * WITH Cronjob for the Server Applicationlogic
+     * dont want to use it on Heroku because of the frequency we would have Heroku app online
+     * would run every day on something like 23:59 with cron job in production
+     * .scheduleJob("<second> <minute> <hour> <day of month> <month> <day of week>"
      */
 
-    schedule.scheduleJob("* /1 * * * *", function() {
+    /**
+    schedule.scheduleJob("30 * * * * *", function() {
         // main function for Server Applicationlogic
-        console.log("TEST SCHEDULE");
+        console.log("------------------ CRONJOB RUNNING");
         applicationlogic.setMainTopic();
         console.log("------------------ FINISHED CRONJOB");
     });
+    */
 
     /**
      * WITHOUT Cronjob for the Server Applicationlogic
-     * Because of frequency that would be scheduled on Heroku
+     * for debugging and presentation of the Applicationlogic
+     * would run every day on something like 23:59 with cron job in production
      */
     applicationlogic.setMainTopic();
 
