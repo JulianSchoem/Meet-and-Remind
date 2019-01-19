@@ -26,6 +26,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * All created Reminders to one Contact
+ */
 public class ContactDetail extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private FloatingActionButton fbtn_AddReminder;

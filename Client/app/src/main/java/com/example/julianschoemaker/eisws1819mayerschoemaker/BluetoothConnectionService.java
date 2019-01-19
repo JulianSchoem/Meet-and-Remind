@@ -69,6 +69,10 @@ public class BluetoothConnectionService extends IntentService {
         return START_STICKY;
     }
 
+    /**
+     *
+     * @param intent
+     */
     @SuppressLint("RestrictedApi")
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -206,6 +210,10 @@ class ServerClass extends Thread{
     }
 }
 
+/**
+ * Client for Bluetooth Connection
+ * Initialized in Main Activity (ContactList)
+ */
 class ClientClass extends Thread{
 
     private BluetoothDevice device;

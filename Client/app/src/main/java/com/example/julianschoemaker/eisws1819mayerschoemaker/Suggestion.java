@@ -13,6 +13,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Suggestion as Web View
+ */
 public class Suggestion extends AppCompatActivity {
 
     private Toolbar mToolbar;

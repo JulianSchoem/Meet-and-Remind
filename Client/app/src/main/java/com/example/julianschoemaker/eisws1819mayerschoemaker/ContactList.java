@@ -25,6 +25,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+
+/**
+ * List of all Contacts
+ */
 public class ContactList extends AppCompatActivity {
 
     private FloatingActionButton fbtn_AddContact;

@@ -24,6 +24,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Set;
 
+/**
+ * Find Bluetooth Devices and get all bonded devices.
+ */
 public class AddContact extends AppCompatActivity {
 
     private static final String LOGTAG = "AddContact";
