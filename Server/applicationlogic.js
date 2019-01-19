@@ -285,7 +285,7 @@ setMainTopic = async function() {
     await getLabelCount(labelInfo);
     // now the most frequent label of all user and their opposite was set to Firebase
 
-    console.log('------------------ FINISHED SERVERSEITIGE ANWENDUNGSLOGIK');
+    console.log('------------------ FINISHED SERVER APPLICATIONLOGIC');
 };
 
 // export function for server.js

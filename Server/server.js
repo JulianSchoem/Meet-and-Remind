@@ -62,7 +62,7 @@ function initServer() {
     });
 
     app.listen(settings.port, function(){
-        console.log('Server ist nun auf Port ' + settings.port + ' verfügbar');
+        console.log('Server now available on Port ' + settings.port);
     });
 
     /**
