@@ -37,6 +37,8 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
     private ProgressBar progress;
     private Toolbar mToolbar;
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +110,7 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
                     }
                     final String array[] = new String[counter];
                     final String arrayRemind[] = new String[counter];
+                    final String[] reminderID = new String[counter];
 
                     try {
                         Iterator<String> keys = jObject.keys();
@@ -118,6 +121,7 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
                             if (jObject.get(key) instanceof JSONObject) {
                                 array[i] = jObject.getJSONObject(key).getString("title");
                                 arrayRemind[i] = jObject.getJSONObject(key).getString("description");
+                                reminderID[i] = key;
                             }
                             i++;
                         }
@@ -130,7 +134,7 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
                         @Override
                         public void run() {
                             progress.setVisibility(View.GONE);
-                            listview_reminderList.setAdapter(new AdapterReminderList(getApplicationContext(), array, arrayRemind));
+                            listview_reminderList.setAdapter(new AdapterReminderList(getApplicationContext(), array, arrayRemind, reminderID));
 
                         }
                     });
@@ -186,11 +190,14 @@ public class ContactDetail extends AppCompatActivity implements AdapterView.OnIt
             }
         });
         Intent activityIntent = new Intent(ContactDetail.this, ReminderDetail.class);
-        String reminderName = listview_reminderList.getAdapter().getItem(position).toString();
+        TextView title = view.findViewById(R.id.txt_contactName);
+        String reminderName = title.getText().toString();
         activityIntent.putExtra("RNAME", reminderName);
         TextView description = view.findViewById(R.id.txt_contactReminder);
         String reminderDesc = description.getText().toString();
         activityIntent.putExtra("DESC", reminderDesc);
+        String reminderID = listview_reminderList.getAdapter().getItem(position).toString();
+        activityIntent.putExtra("ID", reminderID);
         startActivity(activityIntent);
     }
 }

@@ -110,10 +110,11 @@ public class ReminderDetail extends AppCompatActivity {
         fabCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 /**
                  * POST Reminder
                  */
+
+                String url = "https://eisws1819mayerschoemaker.herokuapp.com/users/0C:8F:FF:C7:92:2C/contacts/54:27:58:24:B2:7F/reminder";
 
                 String title = editTextTitle.getText().toString();
                 String desc = editTextDescription.getText().toString();
@@ -136,9 +137,18 @@ public class ReminderDetail extends AppCompatActivity {
                 RequestBody body = RequestBody.create(JSON, jsonObject.toString());
 
                 Request request = new Request.Builder()
-                        .url("https://eisws1819mayerschoemaker.herokuapp.com/users/0C:8F:FF:C7:92:2C/contacts/54:27:58:24:B2:7F/reminder")
+                        .url(url)
                         .post(body)
                         .build();
+
+                if (mToolbar.getTitle().equals("Erinnerung bearbeiten")){
+                    String id = getIntent().getExtras().getString("ID");
+                    url = "https://eisws1819mayerschoemaker.herokuapp.com/users/0C:8F:FF:C7:92:2C/contacts/54:27:58:24:B2:7F/reminder/"+id;
+                    request = new Request.Builder()
+                            .url(url)
+                            .put(body)
+                            .build();
+                }
 
                 client.newCall(request).enqueue(new Callback() {
                     @Override
@@ -173,6 +183,9 @@ public class ReminderDetail extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+
+
 
         listview_labelList = findViewById(R.id.listview_labelList);
         listview_labelList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

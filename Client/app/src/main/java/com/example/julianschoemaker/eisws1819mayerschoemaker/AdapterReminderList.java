@@ -16,13 +16,15 @@ class AdapterReminderList extends BaseAdapter {
     Context context;
     String[] title;
     String[] description;
+    String[] id;
     private static LayoutInflater inflater = null;
 
-    public AdapterReminderList(Context context, String[] titleName, String[] description) {
+    public AdapterReminderList(Context context, String[] titleName, String[] description, String[] reminderID) {
         // Auto-generated constructor stub
         this.context = context;
         this.title = titleName;
         this.description = description;
+        id = reminderID;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -36,7 +38,7 @@ class AdapterReminderList extends BaseAdapter {
     @Override
     public Object getItem(int position) {
         // Auto-generated method stub
-        return title[position];
+        return id[position];
     }
 
     @Override
