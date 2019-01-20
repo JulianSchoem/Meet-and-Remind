@@ -1,7 +1,12 @@
 package com.example.julianschoemaker.eisws1819mayerschoemaker;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +30,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.example.julianschoemaker.eisws1819mayerschoemaker.AddContact.REQUEST_ENABLE_BLUETOOTH;
+
 
 /**
  * List of all Contacts
@@ -36,8 +43,30 @@ public class ContactList extends AppCompatActivity {
     private ListView listview_contactList;
     private FrameLayout touch_area_chat;
     private ProgressBar progress;
+    private BluetoothAdapter mybluetoothAdapter;
 
     public static String matchedTopic;
+
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int bluetoothState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+                switch (bluetoothState) {
+                    case BluetoothAdapter.STATE_ON:
+                        ServerClass serverClass = new ServerClass();
+                        serverClass.start();
+                        //BluetoothConnectionService
+                        Intent serviceIntent = new Intent(ContactList.this, BluetoothConnectionService.class);
+                        startService(serviceIntent);
+                        break;
+                }
+            }
+        }
+    };
 
     //TODO GET REQUEST for Topic Match
     //TODO If there is a Match, change Icon color to Blue
@@ -50,11 +79,21 @@ public class ContactList extends AppCompatActivity {
          * Setup for Client side Application Logic
          */
         // Setup Server for Bluetooth Connection
-        ServerClass serverClass = new ServerClass();
-        serverClass.start();
-        //BluetoothConnectionService
-        Intent serviceIntent = new Intent(this, BluetoothConnectionService.class);
-        startService(serviceIntent);
+        mybluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!mybluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
+            IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+            registerReceiver(mReceiver, filter);
+
+        }else
+        {
+            ServerClass serverClass = new ServerClass();
+            serverClass.start();
+            //BluetoothConnectionService
+            Intent serviceIntent = new Intent(ContactList.this, BluetoothConnectionService.class);
+            startService(serviceIntent);
+        }
 
         fbtn_AddContact = findViewById(R.id.fab);
         fbtn_AddContact.setOnClickListener(new View.OnClickListener() {
