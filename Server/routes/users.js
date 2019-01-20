@@ -63,7 +63,7 @@ router.post('/', function (req, res) {
     db.collection(USERS).doc(userID).set({});
 
     // generate URI
-    let contactURI = req.protocol + '://' + req.get('host') + '/users/' + userID;
+    let userURI = req.protocol + '://' + req.get('host') + '/users/' + userID;
 
     // set URI and finish POST
     res.set('location', userURI);
