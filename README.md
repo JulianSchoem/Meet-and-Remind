@@ -1,5 +1,7 @@
 # Meet & Remind
 
+![Meet & Remind Poster](Projektpräsentation/MayerSchoemaker_PosterWS1819.jpg)
+
 ### Entwicklungsprojekt interaktive Systeme
 
 Wintersemester 2018/2019
